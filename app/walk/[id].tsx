@@ -1,19 +1,15 @@
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { EmptyState } from '@/components/empty-state';
+import { ThemedText } from '@/components/themed-text';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
-export default function HomeScreen() {
+export default function WalkDetailScreen() {
   const { t } = useTranslation();
   const background = useThemeColor({}, 'background');
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
-      <EmptyState
-        icon="🐕"
-        title={t('dogs.noDogs')}
-        message={t('dogs.noDogsMessage')}
-      />
+      <ThemedText type="title">{t('common.comingSoon')}</ThemedText>
     </View>
   );
 }
@@ -21,5 +17,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

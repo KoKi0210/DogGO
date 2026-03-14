@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "retry": "Retry",
+    "comingSoon": "Coming Soon",
+    "ok": "OK"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "displayName": "Display Name",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Sign in to continue",
+    "registerTitle": "Create Account",
+    "registerSubtitle": "Join DogGO today",
+    "logout": "Logout",
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "passwordMin": "Password must be at least 6 characters",
+    "passwordsNoMatch": "Passwords do not match",
+    "nameRequired": "Display name is required",
+    "invalidEmail": "Please enter a valid email"
+  },
+  "tabs": {
+    "home": "Home",
+    "adopt": "Adopt",
+    "leaderboard": "Leaderboard",
+    "profile": "Profile"
+  },
+  "profile": {
+    "myDogs": "My Dogs",
+    "noDogs": "You haven't added any dogs yet",
+    "points": "Points",
+    "streak": "Day Streak",
+    "settings": "Settings",
+    "editProfile": "Edit Profile"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "english": "English",
+    "bulgarian": "Bulgarian",
+    "about": "About",
+    "version": "Version"
+  },
+  "dogs": {
+    "addDog": "Add Dog",
+    "breed": "Breed",
+    "size": "Size",
+    "age": "Age",
+    "description": "Description",
+    "noDogs": "No dogs nearby",
+    "noDogsMessage": "Dogs available for walks will appear here"
+  },
+  "walks": {
+    "startWalk": "Start Walk",
+    "requestWalk": "Request Walk",
+    "endWalk": "End Walk",
+    "activeWalk": "Active Walk",
+    "noWalks": "No walks yet",
+    "noWalksMessage": "Your walk history will appear here"
+  },
+  "adoption": {
+    "adopt": "Adopt",
+    "requestAdoption": "Request Adoption",
+    "noAdoptions": "No dogs available",
+    "noAdoptionsMessage": "Dogs available for adoption will appear here"
+  },
+  "leaderboard": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "allTime": "All Time",
+    "noEntries": "No entries yet",
+    "noEntriesMessage": "Complete walks to appear on the leaderboard"
+  }
+}
