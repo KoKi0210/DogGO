@@ -31,11 +31,24 @@ export default function RegisterScreen() {
 
   function validate() {
     const newErrors: Record<string, string> = {};
+    const hasUppercaseLatin = /[A-Z]/.test(password);
+    const hasLowercaseLatin = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialSymbol = /[^A-Za-z0-9]/.test(password);
+
     if (!displayName.trim()) newErrors.displayName = t('auth.nameRequired');
     if (!email.trim()) newErrors.email = t('auth.emailRequired');
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = t('auth.invalidEmail');
     if (!password) newErrors.password = t('auth.passwordRequired');
-    else if (password.length < 6) newErrors.password = t('auth.passwordMin');
+    else if (
+      password.length < 8 ||
+      !hasUppercaseLatin ||
+      !hasLowercaseLatin ||
+      !hasNumber ||
+      !hasSpecialSymbol
+    ) {
+      newErrors.password = t('auth.passwordStrong');
+    }
     if (password !== confirmPassword) newErrors.confirmPassword = t('auth.passwordsNoMatch');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
