@@ -39,7 +39,14 @@
           }
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "expo-image-picker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "DogGO needs your location to show nearby dogs."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

@@ -9,7 +9,7 @@
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   display_name VARCHAR NOT NULL,
-  avatar_url VARCHAR,И
+  avatar_url VARCHAR,
   role VARCHAR NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'shelter', 'volunteer')),
   language VARCHAR(2) NOT NULL DEFAULT 'en' CHECK (language IN ('en', 'bg')),
   total_points INT NOT NULL DEFAULT 0,
@@ -29,8 +29,8 @@ CREATE TABLE public.dogs (
   status VARCHAR NOT NULL DEFAULT 'walk' CHECK (status IN ('walk', 'adoption', 'both', 'adopted')),
   size VARCHAR NOT NULL CHECK (size IN ('small', 'medium', 'large')),
   age VARCHAR,
-  latitude DECIMAL,
-  longitude DECIMAL,
+  latitude DECIMAL(10,8),
+  longitude DECIMAL(11,8),
   ar_model_url VARCHAR,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -89,6 +89,18 @@ CREATE TABLE public.notifications (
   read BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ============================================================
+-- INDEXES
+-- ============================================================
+
+CREATE INDEX idx_dogs_owner_id ON public.dogs(owner_id);
+CREATE INDEX idx_walks_dog_id ON public.walks(dog_id);
+CREATE INDEX idx_walks_walker_id ON public.walks(walker_id);
+CREATE INDEX idx_adoption_requests_dog_id ON public.adoption_requests(dog_id);
+CREATE INDEX idx_adoption_requests_adopter_id ON public.adoption_requests(adopter_id);
+CREATE INDEX idx_reviews_walk_id ON public.reviews(walk_id);
+CREATE INDEX idx_notifications_user_id ON public.notifications(user_id);
 
 -- ============================================================
 -- TRIGGER: auto-create profile on auth.users insert

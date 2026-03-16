@@ -1,16 +1,21 @@
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { useCallback } from 'react';
 import { useAuth } from '@/contexts/auth-context';
+import { useMyDogs } from '@/hooks/use-my-dogs';
 import { signOut } from '@/lib/auth';
 import { Avatar } from '@/components/avatar';
 import { Button } from '@/components/button';
 import { Card } from '@/components/card';
+import { DogCard } from '@/components/dog-card';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { HEADER_TOP_PADDING } from '@/constants/layout';
 
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
+  const { dogs, refresh } = useMyDogs();
   const router = useRouter();
   const background = useThemeColor({}, 'background');
   const text = useThemeColor({}, 'text');
@@ -18,11 +23,19 @@ export default function ProfileScreen() {
   const primary = useThemeColor({}, 'primary');
   const accent = useThemeColor({}, 'accent');
 
+  // Refresh dogs when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
+
   async function handleLogout() {
     try {
       await signOut();
-    } catch (error: any) {
-      Alert.alert(t('common.error'), error.message);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      Alert.alert(t('common.error'), message);
     }
   }
 
@@ -63,12 +76,33 @@ export default function ProfileScreen() {
         </Card>
       </View>
 
-      <Card style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: text }]}>{t('profile.myDogs')}</Text>
-        <Text style={[styles.emptyText, { color: textSecondary }]}>
-          {t('profile.noDogs')}
-        </Text>
-      </Card>
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: text }]}>{t('dogs.myDogs')}</Text>
+          <Button
+            title={t('dogs.addDog')}
+            onPress={() => router.push('/dog/add')}
+            variant="outline"
+            style={styles.addButton}
+          />
+        </View>
+        {dogs.length > 0 ? (
+          dogs.map((dog) => (
+            <DogCard
+              key={dog.id}
+              dog={dog}
+              showStatusBadge
+              onPress={() => router.push(`/dog/${dog.id}`)}
+            />
+          ))
+        ) : (
+          <Card>
+            <Text style={[styles.emptyText, { color: textSecondary }]}>
+              {t('profile.noDogs')}
+            </Text>
+          </Card>
+        )}
+      </View>
 
       <View style={styles.actions}>
         <Button
@@ -93,7 +127,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 24,
-    paddingTop: 60,
+    paddingTop: HEADER_TOP_PADDING,
   },
   profileHeader: {
     alignItems: 'center',
@@ -129,10 +163,19 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 24,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 8,
+  },
+  addButton: {
+    height: 36,
+    paddingHorizontal: 12,
   },
   emptyText: {
     fontSize: 14,
