@@ -1,0 +1,89 @@
+{
+  "common": {
+    "save": "Запази",
+    "cancel": "Отказ",
+    "delete": "Изтрий",
+    "edit": "Редактирай",
+    "loading": "Зареждане...",
+    "error": "Грешка",
+    "success": "Успех",
+    "retry": "Опитай отново",
+    "comingSoon": "Очаквайте скоро",
+    "ok": "ОК"
+  },
+  "auth": {
+    "login": "Вход",
+    "register": "Регистрация",
+    "email": "Имейл",
+    "password": "Парола",
+    "confirmPassword": "Потвърди парола",
+    "displayName": "Име",
+    "noAccount": "Нямате акаунт?",
+    "hasAccount": "Вече имате акаунт?",
+    "loginTitle": "Добре дошли",
+    "loginSubtitle": "Влезте, за да продължите",
+    "registerTitle": "Създай акаунт",
+    "registerSubtitle": "Присъедини се към DogGO",
+    "logout": "Изход",
+    "emailRequired": "Имейлът е задължителен",
+    "passwordRequired": "Паролата е задължителна",
+    "passwordMin": "Паролата трябва да е поне 6 символа",
+    "passwordStrong": "Паролата трябва да е поне 8 символа и да съдържа главна и малка латинска буква, число и специален символ",
+    "passwordsNoMatch": "Паролите не съвпадат",
+    "nameRequired": "Името е задължително",
+    "invalidEmail": "Моля, въведете валиден имейл"
+  },
+  "tabs": {
+    "home": "Начало",
+    "adopt": "Осинови",
+    "leaderboard": "Класация",
+    "profile": "Профил"
+  },
+  "profile": {
+    "myDogs": "Моите кучета",
+    "noDogs": "Все още нямате добавени кучета",
+    "points": "Точки",
+    "streak": "Дни подред",
+    "settings": "Настройки",
+    "editProfile": "Редактирай профил"
+  },
+  "settings": {
+    "title": "Настройки",
+    "language": "Език",
+    "english": "Английски",
+    "bulgarian": "Български",
+    "about": "За приложението",
+    "version": "Версия"
+  },
+  "dogs": {
+    "addDog": "Добави куче",
+    "breed": "Порода",
+    "size": "Размер",
+    "age": "Възраст",
+    "description": "Описание",
+    "noDogs": "Няма кучета наблизо",
+    "noDogsMessage": "Кучетата за разходка ще се появят тук"
+  },
+  "walks": {
+    "startWalk": "Започни разходка",
+    "requestWalk": "Заявка за разходка",
+    "endWalk": "Завърши разходка",
+    "activeWalk": "Активна разходка",
+    "noWalks": "Все още няма разходки",
+    "noWalksMessage": "Историята на разходките ще се появи тук"
+  },
+  "adoption": {
+    "adopt": "Осинови",
+    "requestAdoption": "Заявка за осиновяване",
+    "noAdoptions": "Няма налични кучета",
+    "noAdoptionsMessage": "Кучетата за осиновяване ще се появят тук"
+  },
+  "leaderboard": {
+    "daily": "Дневна",
+    "weekly": "Седмична",
+    "monthly": "Месечна",
+    "allTime": "Всички времена",
+    "noEntries": "Все още няма записи",
+    "noEntriesMessage": "Завършете разходки, за да се появите в класацията"
+  }
+}

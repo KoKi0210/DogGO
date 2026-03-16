@@ -1,41 +1,51 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * DogGO theme colors and fonts.
  */
 
 import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
     text: '#11181C',
     background: '#fff',
-    tint: tintColorLight,
+    tint: '#FF6B35',
     icon: '#687076',
     tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    tabIconSelected: '#FF6B35',
+    primary: '#FF6B35',
+    secondary: '#004E89',
+    accent: '#2EC4B6',
+    success: '#4CAF50',
+    warning: '#FF9800',
+    error: '#F44336',
+    card: '#FFFFFF',
+    border: '#E0E0E0',
+    textSecondary: '#687076',
   },
   dark: {
     text: '#ECEDEE',
     background: '#151718',
-    tint: tintColorDark,
+    tint: '#FF6B35',
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    tabIconSelected: '#FF6B35',
+    primary: '#FF6B35',
+    secondary: '#3A8FD6',
+    accent: '#2EC4B6',
+    success: '#66BB6A',
+    warning: '#FFA726',
+    error: '#EF5350',
+    card: '#1E2022',
+    border: '#2C2F33',
+    textSecondary: '#9BA1A6',
   },
 };
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {
