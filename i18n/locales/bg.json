@@ -120,6 +120,7 @@
     "walkApproved": "Разходката е одобрена",
     "walkRejected": "Разходката е отказана",
     "walkStarted": "Разходката започна",
+    "walkStartedMessage": "Разходката започна. Проследяването е активно.",
     "walkCompleted": "Разходката е завършена",
     "walkCancelled": "Разходката е отменена",
     "statusRequested": "Заявена",
@@ -156,6 +157,8 @@
     "activeWalkBanner": "Активна разходка с {{dogName}}",
     "tapToResume": "Натиснете за продължаване",
     "noPendingWalks": "Няма чакащи заявки за разходка",
+    "startMyDogWalk": "Започни разходка с моето куче",
+    "onlyOwnerCanStartOwnDogWalk": "Само собственикът може да започне разходка с това куче",
     "km": "км",
     "min": "мин",
     "kmh": "км/ч"

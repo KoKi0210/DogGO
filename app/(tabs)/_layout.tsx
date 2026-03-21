@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useRouter, useFocusEffect } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -15,9 +15,15 @@ export default function TabLayout() {
   const { t } = useTranslation();
   const router = useRouter();
   const { pendingWalks } = usePendingRequests();
-  const { unreadCount } = useNotifications();
+  const { unreadCount, refresh: refreshNotifications } = useNotifications();
 
   const pendingCount = pendingWalks.length;
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refreshNotifications();
+    }, [refreshNotifications])
+  );
 
   return (
     <Tabs

@@ -68,5 +68,29 @@ export function useNotifications() {
     return () => { cancelled = true; };
   }, [fetchNotifications]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel(`notifications:${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          fetchNotifications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, fetchNotifications]);
+
   return { notifications, unreadCount, isLoading, markAsRead, markAllAsRead, refresh: fetchNotifications };
 }

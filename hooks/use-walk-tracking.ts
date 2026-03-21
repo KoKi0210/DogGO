@@ -13,6 +13,7 @@ interface TrackingState {
   route: RoutePoint[];
   distanceKm: number;
   durationMins: number;
+  durationSeconds: number;
   currentSpeed: number;
   startedAt: Date | null;
 }
@@ -23,6 +24,7 @@ export function useWalkTracking() {
     route: [],
     distanceKm: 0,
     durationMins: 0,
+    durationSeconds: 0,
     currentSpeed: 0,
     startedAt: null,
   });
@@ -35,12 +37,16 @@ export function useWalkTracking() {
   const updateDuration = useCallback(() => {
     setState((prev) => {
       if (!prev.startedAt) return prev;
-      const elapsed = (Date.now() - prev.startedAt.getTime()) / 60000;
-      return { ...prev, durationMins: Math.round(elapsed * 10) / 10 };
+      const elapsedSeconds = Math.floor((Date.now() - prev.startedAt.getTime()) / 1000);
+      return {
+        ...prev,
+        durationSeconds: elapsedSeconds,
+        durationMins: elapsedSeconds / 60,
+      };
     });
   }, []);
 
-  const startTracking = useCallback(async () => {
+  const startTracking = useCallback(async (seedStartedAt?: Date) => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       throw new Error('Location permission denied');
@@ -49,13 +55,14 @@ export function useWalkTracking() {
     routeRef.current = [];
     distanceRef.current = 0;
 
-    const startedAt = new Date();
+    const startedAt = seedStartedAt ?? new Date();
 
     setState({
       isTracking: true,
       route: [],
       distanceKm: 0,
       durationMins: 0,
+      durationSeconds: 0,
       currentSpeed: 0,
       startedAt,
     });

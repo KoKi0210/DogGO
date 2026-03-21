@@ -19,7 +19,7 @@ export default function DogDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
-  const { requestWalk, isSubmitting } = useWalkMutations();
+  const { requestWalk, startOwnDogWalk, isSubmitting } = useWalkMutations();
   const { requestAdoption, isSubmitting: isAdoptionSubmitting } = useAdoptionMutations();
 
   const [dog, setDog] = useState<Dog | null>(null);
@@ -72,6 +72,22 @@ export default function DogDetailScreen() {
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       Alert.alert(t('common.error'), message);
+    }
+  }
+
+  async function handleStartMyDogWalk() {
+    if (!id) return;
+    try {
+      const walk = await startOwnDogWalk(id);
+      Alert.alert(t('walks.walkStarted'), t('walks.walkStartedMessage'));
+      router.push(`/walk/${walk.id}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      if (message === 'NOT_DOG_OWNER') {
+        Alert.alert(t('common.error'), t('walks.onlyOwnerCanStartOwnDogWalk'));
+      } else {
+        Alert.alert(t('common.error'), message);
+      }
     }
   }
 
@@ -172,10 +188,18 @@ export default function DogDetailScreen() {
               />
             )}
             {isOwner && (
-              <Button
-                title={t('common.edit')}
-                onPress={() => router.push(`/dog/add?dogId=${id}`)}
-              />
+              <>
+                <Button
+                  title={t('walks.startMyDogWalk')}
+                  onPress={handleStartMyDogWalk}
+                  loading={isSubmitting}
+                />
+                <Button
+                  title={t('common.edit')}
+                  onPress={() => router.push(`/dog/add?dogId=${id}`)}
+                  variant="secondary"
+                />
+              </>
             )}
           </View>
         </View>

@@ -1,7 +1,7 @@
 import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { useWalk } from '@/hooks/use-walk';
 import { useWalkMutations } from '@/hooks/use-walk-mutations';
@@ -33,6 +33,33 @@ export default function WalkDetailScreen() {
 
   const isWalker = user?.id === walk?.walker_id;
   const isOwner = user?.id === walk?.owner?.id;
+  const bootstrappedWalkIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (walk?.status === 'completed' && id) {
+      router.replace(`/walk/summary?walkId=${id}`);
+    }
+  }, [walk?.status, id, router]);
+
+  useEffect(() => {
+    const canBootstrap =
+      !!id &&
+      walk?.status === 'active' &&
+      isWalker &&
+      !tracking.isTracking &&
+      bootstrappedWalkIdRef.current !== id;
+
+    if (!canBootstrap) return;
+
+    bootstrappedWalkIdRef.current = id;
+    const startedAtSeed = walk?.started_at ? new Date(walk.started_at) : undefined;
+
+    tracking.startTracking(startedAtSeed).catch((err: unknown) => {
+      bootstrappedWalkIdRef.current = null;
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      Alert.alert(t('common.error'), msg);
+    });
+  }, [id, walk?.status, walk?.started_at, isWalker, tracking, t]);
 
   const handleStart = useCallback(async () => {
     if (!id) return;
@@ -77,10 +104,13 @@ export default function WalkDetailScreen() {
 
           try {
             const isAdoptedDog = walk.dog?.status === 'adopted' && walk.dog?.owner_id === user?.id;
+            const fallbackDurationMins = walk.started_at
+              ? Math.max(1, Math.round((Date.now() - new Date(walk.started_at).getTime()) / 60000))
+              : 0;
             await endWalk(id, {
               route: result.route,
               distanceKm: result.distanceKm,
-              durationMins: result.durationMins,
+              durationMins: result.durationMins > 0 ? result.durationMins : fallbackDurationMins,
               isAdoptedDog: isAdoptedDog ?? false,
               selfieUrl,
             });
@@ -170,6 +200,8 @@ export default function WalkDetailScreen() {
             <WalkStats
               distanceKm={tracking.distanceKm}
               durationMins={tracking.durationMins}
+              durationSeconds={tracking.durationSeconds}
+              liveFormat
             />
 
             <View style={styles.actions}>
@@ -188,7 +220,6 @@ export default function WalkDetailScreen() {
 
   // Completed — redirect to summary
   if (walk.status === 'completed') {
-    router.replace(`/walk/summary?walkId=${id}`);
     return <Loading fullScreen />;
   }
 

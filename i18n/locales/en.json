@@ -120,6 +120,7 @@
     "walkApproved": "Walk Approved",
     "walkRejected": "Walk Rejected",
     "walkStarted": "Walk Started",
+    "walkStartedMessage": "Walk started. Tracking is now active.",
     "walkCompleted": "Walk Completed",
     "walkCancelled": "Walk Cancelled",
     "statusRequested": "Requested",
@@ -156,6 +157,8 @@
     "activeWalkBanner": "Active walk with {{dogName}}",
     "tapToResume": "Tap to resume",
     "noPendingWalks": "No pending walk requests",
+    "startMyDogWalk": "Start walk with my dog",
+    "onlyOwnerCanStartOwnDogWalk": "Only the owner can start a walk with this dog",
     "km": "km",
     "min": "min",
     "kmh": "km/h"

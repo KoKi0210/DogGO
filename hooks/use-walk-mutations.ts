@@ -28,6 +28,54 @@ export function useWalkMutations() {
     }
   }
 
+  async function startOwnDogWalk(dogId: string) {
+    if (!user) throw new Error('User not authenticated');
+    setIsSubmitting(true);
+    try {
+      // Reuse existing active walk if the user already has one.
+      const { data: activeWalks, error: activeWalkError } = await supabase
+        .from('walks')
+        .select('*')
+        .eq('walker_id', user.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (activeWalkError) throw activeWalkError;
+      if (activeWalks && activeWalks.length > 0) {
+        return activeWalks[0];
+      }
+
+      const { data: dog, error: dogError } = await supabase
+        .from('dogs')
+        .select('owner_id')
+        .eq('id', dogId)
+        .single();
+
+      if (dogError) throw dogError;
+      if (!dog || dog.owner_id !== user.id) throw new Error('NOT_DOG_OWNER');
+
+      const { data, error } = await supabase
+        .from('walks')
+        .insert({
+          walker_id: user.id,
+          dog_id: dogId,
+          status: 'active',
+          started_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error: unknown) {
+      console.error('Error starting own dog walk:', error);
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   async function approveWalk(walkId: string) {
     setIsSubmitting(true);
     try {
@@ -164,6 +212,7 @@ export function useWalkMutations() {
 
   return {
     requestWalk,
+    startOwnDogWalk,
     approveWalk,
     rejectWalk,
     startWalk,
