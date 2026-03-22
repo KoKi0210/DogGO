@@ -9,7 +9,7 @@
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   display_name VARCHAR NOT NULL,
-  avatar_url VARCHAR,И
+  avatar_url VARCHAR,
   role VARCHAR NOT NULL DEFAULT 'user' CHECK (role IN ('user', 'shelter', 'volunteer')),
   language VARCHAR(2) NOT NULL DEFAULT 'en' CHECK (language IN ('en', 'bg')),
   total_points INT NOT NULL DEFAULT 0,

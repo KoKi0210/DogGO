@@ -29,6 +29,7 @@ export interface Profile {
   total_points: number;
   streak_count: number;
   last_streak_date: string | null;
+  push_token: string | null;
   created_at: string;
 }
 
@@ -97,6 +98,23 @@ export interface Notification {
 }
 
 // ============================================================
+// RPC Return Types
+// ============================================================
+
+export interface LeaderboardEntry {
+  user_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  points: number;
+  rank: number;
+}
+
+export interface StreakResult {
+  new_streak: number;
+  bonus_points: number;
+}
+
+// ============================================================
 // Supabase Database Type
 // ============================================================
 
@@ -105,9 +123,10 @@ export interface Database {
     Tables: {
       profiles: {
         Row: Profile;
-        Insert: Omit<Profile, 'total_points' | 'streak_count' | 'created_at'> & {
+        Insert: Omit<Profile, 'total_points' | 'streak_count' | 'created_at' | 'push_token'> & {
           total_points?: number;
           streak_count?: number;
+          push_token?: string | null;
           created_at?: string;
         };
         Update: Partial<Omit<Profile, 'id'>>;

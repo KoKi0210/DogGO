@@ -39,13 +39,19 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false, headerBackTitle: ' ' }} />
         <Stack.Screen name="settings" options={{ presentation: 'modal', title: 'Settings' }} />
         <Stack.Screen name="dog/[id]" options={{ title: 'Dog' }} />
         <Stack.Screen name="dog/add" options={{ title: 'Add Dog' }} />
         <Stack.Screen name="walk/[id]" options={{ title: 'Walk' }} />
         <Stack.Screen name="walk/summary" options={{ title: 'Walk Summary' }} />
         <Stack.Screen name="adoption/[id]" options={{ title: 'Adoption' }} />
+        <Stack.Screen name="profile/edit" options={{ title: 'Edit Profile' }} />
+        <Stack.Screen name="profile/dogs" options={{ title: 'My Dogs' }} />
+        <Stack.Screen name="profile/walks" options={{ title: 'My Walks' }} />
+        <Stack.Screen name="profile/pending" options={{ title: 'Pending Requests' }} />
+        <Stack.Screen name="profile/adoptions" options={{ title: 'Adoptions' }} />
+        <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
