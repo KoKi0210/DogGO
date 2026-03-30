@@ -16,11 +16,14 @@ export function ProfileSectionRow({ emoji, title, count, subtitle, onPress, show
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const error = useThemeColor({}, 'error');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
 
   return (
     <Card onPress={onPress} style={styles.card}>
       <View style={styles.row}>
-        <Text style={styles.emoji}>{emoji}</Text>
+        <View style={[styles.emojiBlob, { backgroundColor: surfacePrimary }]}>
+          <Text style={styles.emoji}>{emoji}</Text>
+        </View>
         <View style={styles.content}>
           <View style={styles.titleRow}>
             <Text style={[styles.title, { color: text }]}>
@@ -34,7 +37,7 @@ export function ProfileSectionRow({ emoji, title, count, subtitle, onPress, show
             <Text style={[styles.subtitle, { color: textSecondary }]}>{subtitle}</Text>
           ) : null}
         </View>
-        <IconSymbol name="chevron.right" size={20} color={textSecondary} />
+        <IconSymbol name="chevron.right" size={22} color={textSecondary} />
       </View>
     </Card>
   );
@@ -43,10 +46,17 @@ export function ProfileSectionRow({ emoji, title, count, subtitle, onPress, show
 const styles = StyleSheet.create({
   card: { marginBottom: 12 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  emoji: { fontSize: 24 },
+  emojiBlob: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emoji: { fontSize: 22, lineHeight: 28 },
   content: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  title: { fontSize: 16, fontWeight: '600' },
+  title: { fontSize: 16, fontWeight: '700' },
   subtitle: { fontSize: 13, marginTop: 2 },
   badge: { width: 10, height: 10, borderRadius: 5 },
 });

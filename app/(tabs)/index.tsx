@@ -1,5 +1,11 @@
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useNearbyDogs, DogWithDistance } from '@/hooks/use-nearby-dogs';
@@ -9,8 +15,13 @@ import { useAuth } from '@/contexts/auth-context';
 import { getCurrentLocation } from '@/lib/location';
 import { DogCard } from '@/components/dog-card';
 import { EmptyState } from '@/components/empty-state';
+import { ClayCard } from '@/components/clay-card';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { Shadows } from '@/constants/theme';
 import { Dog } from '@/types/database';
+
+const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
+const SPRING_OUT = { damping: 10, stiffness: 200, mass: 0.8 };
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -19,9 +30,10 @@ export default function HomeScreen() {
   const background = useThemeColor({}, 'background');
   const text = useThemeColor({}, 'text');
   const primary = useThemeColor({}, 'primary');
+  const primaryLight = useThemeColor({}, 'primaryLight');
   const accent = useThemeColor({}, 'accent');
-  const card = useThemeColor({}, 'card');
-  const border = useThemeColor({}, 'border');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const textSecondary = useThemeColor({}, 'textSecondary');
 
   const [userLat, setUserLat] = useState<number | null>(null);
   const [userLon, setUserLon] = useState<number | null>(null);
@@ -80,6 +92,21 @@ export default function HomeScreen() {
 
   const keyExtractor = useCallback((item: DogWithDistance) => item.id, []);
 
+  // Banner spring animation
+  const bannerScale = useSharedValue(1);
+  const bannerAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: bannerScale.value }],
+  }));
+
+  // FAB entrance animation
+  const fabScale = useSharedValue(0.7);
+  const fabAnimStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: fabScale.value }],
+  }));
+  useEffect(() => {
+    fabScale.value = withSpring(1, { damping: 8, stiffness: 180 });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <View style={[styles.container, { backgroundColor: background }]}>
       <FlatList
@@ -91,35 +118,65 @@ export default function HomeScreen() {
           <View>
             {/* Active Walk Resume Banner */}
             {activeWalk && (
-              <Pressable
-                style={[styles.activeWalkBanner, { backgroundColor: primary }]}
-                onPress={() => router.push(`/walk/${activeWalk.id}`)}
-              >
-                <Text style={styles.bannerEmoji}>🏃</Text>
-                <View style={styles.bannerContent}>
-                  <Text style={styles.bannerTitle}>
-                    {t('walks.activeWalkBanner', { dogName: activeWalk.dog?.name ?? '' })}
-                  </Text>
-                  <Text style={styles.bannerSubtitle}>{t('walks.tapToResume')}</Text>
-                </View>
-              </Pressable>
+              <Animated.View style={bannerAnimStyle}>
+                <Pressable
+                  onPress={() => router.push(`/walk/${activeWalk.id}`)}
+                  onPressIn={() => { bannerScale.value = withSpring(0.96, SPRING_IN); }}
+                  onPressOut={() => { bannerScale.value = withSpring(1, SPRING_OUT); }}>
+                  <LinearGradient
+                    colors={[primary, primaryLight]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={[styles.activeWalkBanner, Shadows.clayMd[0]]}>
+                    <View style={styles.bannerEmojiBlob}>
+                      <Text style={styles.bannerEmoji}>🏃</Text>
+                    </View>
+                    <View style={styles.bannerContent}>
+                      <Text style={styles.bannerTitle}>
+                        {t('walks.activeWalkBanner', { dogName: activeWalk.dog?.name ?? '' })}
+                      </Text>
+                      <Text style={styles.bannerSubtitle}>{t('walks.tapToResume')}</Text>
+                    </View>
+                  </LinearGradient>
+                </Pressable>
+              </Animated.View>
             )}
-            {/* Streak Card */}
+
+            {/* Streak Hero Card */}
             {profile && profile.streak_count > 0 && (
-              <View style={[styles.streakCard, { backgroundColor: card, borderColor: border }]}>
-                <Text style={styles.streakEmoji}>🔥</Text>
-                <View>
-                  <Text style={[styles.streakCount, { color: accent }]}>
-                    {profile.streak_count} {t('profile.streak')}
-                  </Text>
-                  <Text style={[styles.streakPoints, { color: primary }]}>
-                    +{profile.streak_count * 5} {t('profile.points').toLowerCase()}
-                  </Text>
-                </View>
-              </View>
+              <ClayCard shadowLevel="lg" radius={24} style={{ padding: 0 }}>
+                <LinearGradient
+                  colors={[surfacePrimary, '#FFE4D0']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.streakCard}>
+                  {/* Decorative blob */}
+                  <View style={styles.streakBlob} />
+                  <View style={[styles.streakEmojiBlob, { backgroundColor: primary + '20' }]}>
+                    <Text style={styles.streakEmoji}>🔥</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.streakCount, { color: primary }]}>
+                      {profile.streak_count}
+                    </Text>
+                    <Text style={[styles.streakLabel, { color: textSecondary }]}>
+                      {t('profile.streak')}
+                    </Text>
+                    <View style={[styles.streakBonusPill, { backgroundColor: surfacePrimary }]}>
+                      <Text style={[styles.streakPoints, { color: accent }]}>
+                        +{profile.streak_count * 5} pts
+                      </Text>
+                    </View>
+                  </View>
+                </LinearGradient>
+              </ClayCard>
             )}
+
             {dogs.length > 0 && (
-              <Text style={[styles.header, { color: text }]}>{t('dogs.nearbyDogs')}</Text>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.accentBar, { backgroundColor: primary }]} />
+                <Text style={[styles.header, { color: text }]}>{t('dogs.nearbyDogs')}</Text>
+              </View>
             )}
           </View>
         }
@@ -137,7 +194,10 @@ export default function HomeScreen() {
         ListFooterComponent={
           myActiveDogs.length > 0 ? (
             <View style={styles.myDogsSection}>
-              <Text style={[styles.header, { color: text }]}>{t('dogs.myActiveDogs')}</Text>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.accentBar, { backgroundColor: primary }]} />
+                <Text style={[styles.header, { color: text }]}>{t('dogs.myActiveDogs')}</Text>
+              </View>
               {myActiveDogs.map(renderMyDogItem)}
             </View>
           ) : null
@@ -149,12 +209,20 @@ export default function HomeScreen() {
 
       {/* Floating Action Button */}
       {(dogs.length > 0 || myActiveDogs.length > 0) && (
-        <Pressable
-          style={[styles.fab, { backgroundColor: primary }]}
-          onPress={navigateToAddDog}
-        >
-          <Text style={styles.fabIcon}>+</Text>
-        </Pressable>
+        <Animated.View style={[styles.fabWrapper, fabAnimStyle]}>
+          <Pressable
+            onPress={navigateToAddDog}
+            onPressIn={() => { fabScale.value = withSpring(0.90, SPRING_IN); }}
+            onPressOut={() => { fabScale.value = withSpring(1, SPRING_OUT); }}>
+            <LinearGradient
+              colors={[primary, primaryLight]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={[styles.fab, Shadows.clayLg[0]]}>
+              <Text style={styles.fabIcon}>+</Text>
+            </LinearGradient>
+          </Pressable>
+        </Animated.View>
       )}
     </View>
   );
@@ -162,48 +230,89 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  list: { padding: 16, paddingTop: 60 },
+  list: { padding: 16, paddingTop: 16, paddingBottom: 110 },
   emptyContainer: { flex: 1 },
-  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    marginTop: 8,
+  },
+  accentBar: {
+    width: 4,
+    height: 22,
+    borderRadius: 2,
+    marginRight: 10,
+  },
+  header: { fontSize: 22, fontWeight: '800', letterSpacing: -0.3 },
   myDogsSection: { marginTop: 24 },
   streakCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    marginBottom: 16,
+    gap: 16,
+    padding: 20,
+    borderRadius: 24,
+    overflow: 'hidden',
+    marginBottom: 20,
   },
-  streakEmoji: { fontSize: 28 },
-  streakCount: { fontSize: 16, fontWeight: '700' },
-  streakPoints: { fontSize: 12, fontWeight: '500', marginTop: 2 },
-  fab: {
+  streakBlob: {
     position: 'absolute',
-    bottom: 24,
+    top: -20,
+    right: -10,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#FF9A6C20',
+  },
+  streakEmojiBlob: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  streakEmoji: { fontSize: 36, lineHeight: 44 },
+  streakCount: { fontSize: 36, fontWeight: '900', letterSpacing: -0.5 },
+  streakLabel: { fontSize: 13, fontWeight: '600', marginTop: 2 },
+  streakBonusPill: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 12,
+    marginTop: 6,
+  },
+  streakPoints: { fontSize: 13, fontWeight: '700' },
+  fabWrapper: {
+    position: 'absolute',
+    bottom: 100,
     right: 24,
+  },
+  fab: {
     width: 56,
     height: 56,
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
   },
-  fabIcon: { color: '#FFFFFF', fontSize: 28, fontWeight: '300', marginTop: -2 },
+  fabIcon: { color: '#FFFFFF', fontSize: 32, fontWeight: '300', marginTop: -2 },
   activeWalkBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 14,
-    borderRadius: 12,
+    padding: 16,
+    borderRadius: 24,
     marginBottom: 16,
   },
-  bannerEmoji: { fontSize: 28 },
+  bannerEmojiBlob: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bannerEmoji: { fontSize: 24, lineHeight: 30 },
   bannerContent: { flex: 1 },
-  bannerTitle: { color: '#FFFFFF', fontSize: 16, fontWeight: '700' },
+  bannerTitle: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' },
   bannerSubtitle: { color: '#FFFFFFCC', fontSize: 13, marginTop: 2 },
 });

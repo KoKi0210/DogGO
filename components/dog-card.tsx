@@ -1,8 +1,15 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { Dog, DogStatus } from '@/types/database';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { formatDistance } from '@/lib/location';
+import { ClayCard } from '@/components/clay-card';
 
 interface DogCardProps {
   dog: Dog;
@@ -25,65 +32,91 @@ const BADGE_COLOR_KEY: Record<DogStatus, 'accent' | 'primary' | 'secondary' | 't
   adopted: 'textSecondary',
 };
 
+const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
+const SPRING_OUT = { damping: 12, stiffness: 200, mass: 0.8 };
+
 export function DogCard({ dog, distance, showStatusBadge, onPress }: DogCardProps) {
   const { t } = useTranslation();
-  const background = useThemeColor({}, 'card');
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const primary = useThemeColor({}, 'primary');
-  const border = useThemeColor({}, 'border');
   const badgeColor = useThemeColor({}, BADGE_COLOR_KEY[dog.status]);
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const surfaceAccent = useThemeColor({}, 'surfaceAccent');
+  const accent = useThemeColor({}, 'accent');
+
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   return (
-    <Pressable
-      style={[styles.card, { backgroundColor: background, borderColor: border }]}
-      onPress={onPress}
-      disabled={!onPress}>
-      {dog.photo_url ? (
-        <Image source={{ uri: dog.photo_url }} style={styles.photo} />
-      ) : (
-        <View style={[styles.photo, styles.photoPlaceholder, { backgroundColor: primary + '20' }]}>
-          <Text style={styles.photoEmoji}>🐕</Text>
-        </View>
-      )}
+    <Animated.View style={[animatedStyle, styles.wrapper]}>
+      <Pressable
+        onPress={onPress}
+        disabled={!onPress}
+        onPressIn={() => { scale.value = withSpring(0.96, SPRING_IN); }}
+        onPressOut={() => { scale.value = withSpring(1, SPRING_OUT); }}>
+        <ClayCard shadowLevel="md" radius={20} style={styles.card}>
+          {dog.photo_url ? (
+            <View style={styles.photoContainer}>
+              <Image source={{ uri: dog.photo_url }} style={styles.photo} />
+            </View>
+          ) : (
+            <LinearGradient
+              colors={[surfacePrimary, '#FFE0D0']}
+              style={[styles.photoContainer, styles.photoPlaceholder]}>
+              <Text style={styles.photoEmoji}>🐕</Text>
+            </LinearGradient>
+          )}
 
-      <View style={styles.info}>
-        <View style={styles.row}>
-          <Text style={[styles.name, { color: text }]} numberOfLines={1}>{dog.name}</Text>
-          {showStatusBadge && (
-            <View style={[styles.badge, { backgroundColor: badgeColor }]}>
-              <Text style={styles.badgeText}>{t(STATUS_KEY[dog.status])}</Text>
+          <View style={styles.info}>
+            <View style={styles.row}>
+              <Text style={[styles.name, { color: text }]} numberOfLines={1}>{dog.name}</Text>
+              {showStatusBadge && (
+                <View style={[styles.badge, { backgroundColor: badgeColor }]}>
+                  <Text style={styles.badgeText}>{t(STATUS_KEY[dog.status])}</Text>
+                </View>
+              )}
             </View>
-          )}
-        </View>
-        <Text style={[styles.breed, { color: textSecondary }]} numberOfLines={1}>{dog.breed}</Text>
-        <View style={styles.tags}>
-          <View style={[styles.tag, { backgroundColor: border }]}>
-            <Text style={[styles.tagText, { color: text }]}>{t(`dogs.${dog.size}`)}</Text>
+            <Text style={[styles.breed, { color: textSecondary }]} numberOfLines={1}>{dog.breed}</Text>
+            <View style={styles.tags}>
+              <View style={[styles.tag, { backgroundColor: surfacePrimary }]}>
+                <Text style={[styles.tagText, { color: primary }]}>{t(`dogs.${dog.size}`)}</Text>
+              </View>
+              {distance != null && (
+                <View style={[styles.tag, { backgroundColor: surfaceAccent }]}>
+                  <Text style={[styles.tagText, { color: accent }]}>{formatDistance(distance)}</Text>
+                </View>
+              )}
+            </View>
           </View>
-          {distance != null && (
-            <View style={[styles.tag, { backgroundColor: border }]}>
-              <Text style={[styles.tagText, { color: text }]}>{formatDistance(distance)}</Text>
-            </View>
-          )}
-        </View>
-      </View>
-    </Pressable>
+        </ClayCard>
+      </Pressable>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { flexDirection: 'row', borderRadius: 12, borderWidth: 1, overflow: 'hidden', marginBottom: 12 },
-  photo: { width: 100, height: 100 },
+  wrapper: { marginBottom: 16 },
+  card: { flexDirection: 'row', padding: 0 },
+  photoContainer: {
+    width: 110,
+    height: 110,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    overflow: 'hidden',
+  },
+  photo: { width: 110, height: 110, resizeMode: 'cover' },
   photoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  photoEmoji: { fontSize: 40 },
+  photoEmoji: { fontSize: 40, lineHeight: 48 },
   info: { flex: 1, padding: 12, justifyContent: 'space-between' },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
-  name: { fontSize: 18, fontWeight: '600', flexShrink: 1 },
-  breed: { fontSize: 14, marginTop: 2 },
+  name: { fontSize: 18, fontWeight: '800', flexShrink: 1, letterSpacing: -0.3 },
+  breed: { fontSize: 14, fontWeight: '500', marginTop: 2 },
   tags: { flexDirection: 'row', gap: 6, marginTop: 8 },
-  tag: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  tagText: { fontSize: 12, fontWeight: '500' },
-  badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  badgeText: { color: '#FFFFFF', fontSize: 11, fontWeight: '600' },
+  tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+  tagText: { fontSize: 12, fontWeight: '600' },
+  badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+  badgeText: { color: '#FFFFFF', fontSize: 11, fontWeight: '700' },
 });

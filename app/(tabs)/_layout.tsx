@@ -5,10 +5,30 @@ import { useTranslation } from 'react-i18next';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
+import { Colors, Shadows } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { usePendingRequests } from '@/hooks/use-pending-requests';
 import { useNotifications } from '@/hooks/use-notifications';
+
+function TabBarBackground() {
+  const colorScheme = useColorScheme();
+  const card = Colors[colorScheme ?? 'light'].card;
+  const shadow = Shadows.clayMd[1]; // neutral shadow for the tab bar
+
+  return (
+    <View
+      style={[
+        {
+          flex: 1,
+          borderRadius: 32,
+          backgroundColor: card,
+          overflow: 'visible',
+        },
+        shadow,
+      ]}
+    />
+  );
+}
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -18,6 +38,7 @@ export default function TabLayout() {
   const { unreadCount, refresh: refreshNotifications } = useNotifications();
 
   const pendingCount = pendingWalks.length;
+  const background = Colors[colorScheme ?? 'light'].background;
 
   useFocusEffect(
     React.useCallback(() => {
@@ -31,6 +52,29 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarBackground: () => <TabBarBackground />,
+        tabBarStyle: {
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          elevation: 0,
+          position: 'absolute',
+          bottom: 20,
+          left: 20,
+          right: 20,
+          borderRadius: 32,
+          height: 68,
+          paddingBottom: 8,
+          paddingTop: 4,
+        },
+        headerStyle: {
+          backgroundColor: background,
+        },
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          fontWeight: '800' as const,
+          fontSize: 22,
+          letterSpacing: -0.3,
+        },
       }}>
       <Tabs.Screen
         name="index"
@@ -91,12 +135,14 @@ const styles = StyleSheet.create({
     top: -4,
     right: -10,
     backgroundColor: '#F44336',
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
   tabBadgeText: {
     color: '#FFFFFF',
@@ -112,12 +158,14 @@ const styles = StyleSheet.create({
     top: -2,
     right: -4,
     backgroundColor: '#F44336',
-    borderRadius: 8,
-    minWidth: 16,
-    height: 16,
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
   },
   bellBadgeText: {
     color: '#FFFFFF',

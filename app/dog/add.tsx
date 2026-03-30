@@ -49,6 +49,7 @@ export default function AddDogScreen() {
   const border = useThemeColor({}, 'border');
   const card = useThemeColor({}, 'card');
   const errorColor = useThemeColor({}, 'error');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
 
   // Form state
   const [name, setName] = useState('');
@@ -251,7 +252,7 @@ export default function AddDogScreen() {
                 </Pressable>
               </View>
             ) : (
-              <View style={[styles.photoPlaceholder, { borderColor: border }]}>
+              <View style={[styles.photoPlaceholder, { backgroundColor: surfacePrimary }]}>
                 <Text style={styles.photoEmoji}>📷</Text>
                 <Text style={[styles.photoHint, { color: textSecondary }]}>
                   {t('dogs.photoHint')}
@@ -385,7 +386,7 @@ const styles = StyleSheet.create({
   content: { padding: 24, paddingBottom: 48 },
   photoSection: { marginBottom: 16, alignItems: 'center' },
   photoPreviewContainer: { position: 'relative', marginBottom: 12 },
-  photoPreview: { width: '100%', height: 200, borderRadius: 12 },
+  photoPreview: { width: '100%', height: 200, borderRadius: 20 },
   removePhotoBtn: {
     position: 'absolute',
     top: 8,
@@ -400,30 +401,28 @@ const styles = StyleSheet.create({
   photoPlaceholder: {
     width: '100%',
     height: 160,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderStyle: 'dashed',
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
   },
-  photoEmoji: { fontSize: 40, marginBottom: 8 },
+  photoEmoji: { fontSize: 48, marginBottom: 8 },
   photoHint: { fontSize: 14 },
   photoActions: { flexDirection: 'row', gap: 12 },
   photoButton: { flex: 1 },
-  label: { fontSize: 14, fontWeight: '500', marginBottom: 6 },
+  label: { fontSize: 14, fontWeight: '600', marginBottom: 6 },
   hint: { fontSize: 12, marginBottom: 8 },
   chipRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   chip: {
     flex: 1,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 16,
     borderWidth: 2,
     alignItems: 'center',
   },
-  chipText: { fontSize: 14, fontWeight: '500' },
+  chipText: { fontSize: 14, fontWeight: '600' },
   textArea: { height: 80, textAlignVertical: 'top', paddingTop: 12 },
-  mapContainer: { height: 200, borderRadius: 12, overflow: 'hidden', marginBottom: 16 },
+  mapContainer: { height: 200, borderRadius: 20, overflow: 'hidden', marginBottom: 16 },
   map: { flex: 1 },
   actions: { gap: 12, marginTop: 8 },
 });

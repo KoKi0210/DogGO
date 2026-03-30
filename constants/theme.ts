@@ -1,19 +1,21 @@
 /**
- * DogGO theme colors and fonts.
+ * DogGO theme — Claymorphism design system.
  */
 
-import { Platform } from 'react-native';
+import { Platform, ViewStyle } from 'react-native';
 
 export const Colors = {
   light: {
     text: '#11181C',
-    background: '#fff',
+    background: '#FFF8F5',
     tint: '#FF6B35',
     icon: '#687076',
     tabIconDefault: '#687076',
     tabIconSelected: '#FF6B35',
     primary: '#FF6B35',
+    primaryLight: '#FF9A6C',
     secondary: '#004E89',
+    secondaryLight: '#2E6FA8',
     accent: '#2EC4B6',
     success: '#4CAF50',
     warning: '#FF9800',
@@ -21,24 +23,88 @@ export const Colors = {
     card: '#FFFFFF',
     border: '#E0E0E0',
     textSecondary: '#687076',
+    surfacePrimary: '#FFF0EA',
+    surfaceSecondary: '#E8F0FA',
+    surfaceAccent: '#E8FAF8',
   },
   dark: {
     text: '#ECEDEE',
-    background: '#151718',
+    background: '#1A1210',
     tint: '#FF6B35',
     icon: '#9BA1A6',
     tabIconDefault: '#9BA1A6',
     tabIconSelected: '#FF6B35',
     primary: '#FF6B35',
+    primaryLight: '#FF9A6C',
     secondary: '#3A8FD6',
+    secondaryLight: '#5AAAE6',
     accent: '#2EC4B6',
     success: '#66BB6A',
     warning: '#FFA726',
     error: '#EF5350',
-    card: '#1E2022',
+    card: '#241C1A',
     border: '#2C2F33',
     textSecondary: '#9BA1A6',
+    surfacePrimary: '#3D2118',
+    surfaceSecondary: '#0D1E30',
+    surfaceAccent: '#0A2825',
   },
+};
+
+export const Spacing = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  xxl: 32,
+  xxxl: 48,
+} as const;
+
+export const TypographyScale = {
+  size: { xs: 12, sm: 14, md: 16, lg: 18, xl: 22, xxl: 28, xxxl: 36 },
+  weight: {
+    regular: '400' as const,
+    medium: '500' as const,
+    semibold: '600' as const,
+    bold: '700' as const,
+    extrabold: '800' as const,
+    black: '900' as const,
+  },
+  letterSpacing: {
+    tight: -0.3,
+    tighter: -0.5,
+  },
+} as const;
+
+export const Radius = {
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  full: 999,
+} as const;
+
+type ShadowLayer = Pick<
+  ViewStyle,
+  'shadowColor' | 'shadowOffset' | 'shadowOpacity' | 'shadowRadius' | 'elevation'
+>;
+
+export const Shadows: Record<'claySm' | 'clayMd' | 'clayLg', ShadowLayer[]> = {
+  claySm: [
+    { shadowColor: '#FF6B35', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.10, shadowRadius: 6, elevation: 3 },
+    { shadowColor: '#000000', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.06, shadowRadius: 12, elevation: 5 },
+  ],
+  clayMd: [
+    { shadowColor: '#FF6B35', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.12, shadowRadius: 8, elevation: 5 },
+    { shadowColor: '#000000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.08, shadowRadius: 16, elevation: 8 },
+    { shadowColor: '#FF6B35', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 4, elevation: 2 },
+  ],
+  clayLg: [
+    { shadowColor: '#FF6B35', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.16, shadowRadius: 12, elevation: 8 },
+    { shadowColor: '#000000', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.10, shadowRadius: 24, elevation: 14 },
+    { shadowColor: '#FF9A6C', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.12, shadowRadius: 8, elevation: 4 },
+  ],
 };
 
 export const Fonts = Platform.select({

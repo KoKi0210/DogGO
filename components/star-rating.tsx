@@ -11,6 +11,7 @@ interface StarRatingProps {
 
 export function StarRating({ rating, maxRating = 5, size = 28, editable = false, onChange }: StarRatingProps) {
   const selectedColor = useThemeColor({}, 'primary');
+  const emptyColor = useThemeColor({}, 'border');
 
   return (
     <View style={styles.container}>
@@ -28,7 +29,7 @@ export function StarRating({ rating, maxRating = 5, size = 28, editable = false,
               style={{
                 fontSize: size,
                 lineHeight: size + 6,
-                color: filled ? selectedColor : '#000000',
+                color: filled ? selectedColor : emptyColor,
               }}>
               {filled ? '★' : '☆'}
             </Text>

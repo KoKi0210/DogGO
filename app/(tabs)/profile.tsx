@@ -1,4 +1,5 @@
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useCallback } from 'react';
@@ -10,7 +11,7 @@ import { usePendingRequests } from '@/hooks/use-pending-requests';
 import { signOut } from '@/lib/auth';
 import { Avatar } from '@/components/avatar';
 import { Button } from '@/components/button';
-import { Card } from '@/components/card';
+import { ClayCard } from '@/components/clay-card';
 import { ProfileSectionRow } from '@/components/profile-section-row';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
@@ -26,7 +27,10 @@ export default function ProfileScreen() {
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const primary = useThemeColor({}, 'primary');
+  const primaryLight = useThemeColor({}, 'primaryLight');
   const accent = useThemeColor({}, 'accent');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const surfaceAccent = useThemeColor({}, 'surfaceAccent');
 
   useFocusEffect(
     useCallback(() => {
@@ -53,33 +57,63 @@ export default function ProfileScreen() {
     <ScrollView
       style={[styles.container, { backgroundColor: background }]}
       contentContainerStyle={styles.content}>
-      <View style={styles.profileHeader}>
+      {/* Gradient Header */}
+      <LinearGradient
+        colors={[primary, primaryLight]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradientHeader}>
+        {/* Decorative blobs */}
+        <View style={styles.headerBlob1} />
+        <View style={styles.headerBlob2} />
+      </LinearGradient>
+
+      {/* Avatar pops out below gradient */}
+      <View style={styles.avatarWrapper}>
         <Avatar uri={profile?.avatar_url} name={profile?.display_name} size={80} />
+      </View>
+
+      <View style={styles.nameSection}>
         <Text style={[styles.displayName, { color: text }]}>
           {profile?.display_name ?? user?.email}
         </Text>
-        <Text style={[styles.role, { color: textSecondary }]}>
-          {profile?.role ?? 'user'}
-        </Text>
+        <View style={[styles.rolePill, { backgroundColor: surfacePrimary }]}>
+          <Text style={[styles.role, { color: primary }]}>
+            {profile?.role ?? 'user'}
+          </Text>
+        </View>
       </View>
 
+      {/* Stats Row */}
       <View style={styles.statsRow}>
-        <Card style={styles.statCard}>
-          <Text style={[styles.statValue, { color: primary }]}>
-            {profile?.total_points ?? 0}
-          </Text>
-          <Text style={[styles.statLabel, { color: textSecondary }]}>
-            {t('profile.points')}
-          </Text>
-        </Card>
-        <Card style={styles.statCard}>
-          <Text style={[styles.statValue, { color: accent }]}>
-            {profile?.streak_count ?? 0}
-          </Text>
-          <Text style={[styles.statLabel, { color: textSecondary }]}>
-            {t('profile.streak')}
-          </Text>
-        </Card>
+        <ClayCard shadowLevel="md" radius={20} style={{ flex: 1, padding: 0 }}>
+          <LinearGradient
+            colors={[surfacePrimary, '#FFE0D0']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.statCardInner}>
+            <Text style={[styles.statValue, { color: primary }]}>
+              {profile?.total_points ?? 0}
+            </Text>
+            <Text style={[styles.statLabel, { color: textSecondary }]}>
+              {t('profile.points')}
+            </Text>
+          </LinearGradient>
+        </ClayCard>
+        <ClayCard shadowLevel="md" radius={20} style={{ flex: 1, padding: 0 }}>
+          <LinearGradient
+            colors={[surfaceAccent, '#D0F4F0']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.statCardInner}>
+            <Text style={[styles.statValue, { color: accent }]}>
+              {profile?.streak_count ?? 0}
+            </Text>
+            <Text style={[styles.statLabel, { color: textSecondary }]}>
+              {t('profile.streak')}
+            </Text>
+          </LinearGradient>
+        </ClayCard>
       </View>
 
       {/* Section rows */}
@@ -139,14 +173,56 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { padding: 24, paddingTop: 60 },
-  profileHeader: { alignItems: 'center', marginBottom: 24 },
-  displayName: { fontSize: 24, fontWeight: 'bold', marginTop: 12 },
-  role: { fontSize: 14, marginTop: 4, textTransform: 'capitalize' },
-  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 24 },
-  statCard: { flex: 1, alignItems: 'center' },
-  statValue: { fontSize: 28, fontWeight: 'bold' },
-  statLabel: { fontSize: 12, marginTop: 4 },
-  sections: { marginBottom: 24 },
-  actions: { gap: 12 },
+  content: { paddingBottom: 120 },
+  gradientHeader: {
+    height: 200,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    overflow: 'hidden',
+  },
+  headerBlob1: {
+    position: 'absolute',
+    top: 20,
+    right: -20,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: 'rgba(255,255,255,0.12)',
+  },
+  headerBlob2: {
+    position: 'absolute',
+    bottom: -10,
+    left: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  avatarWrapper: {
+    alignItems: 'center',
+    marginTop: -40,
+  },
+  nameSection: {
+    alignItems: 'center',
+    marginTop: 12,
+    marginBottom: 24,
+  },
+  displayName: { fontSize: 24, fontWeight: '800', letterSpacing: -0.3 },
+  rolePill: {
+    marginTop: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+    borderRadius: 20,
+  },
+  role: { fontSize: 14, fontWeight: '600', textTransform: 'capitalize' },
+  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 24, paddingHorizontal: 24 },
+  statCardInner: {
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 20,
+  },
+  statValue: { fontSize: 32, fontWeight: '900' },
+  statLabel: { fontSize: 13, fontWeight: '600', marginTop: 4 },
+  sections: { marginBottom: 24, paddingHorizontal: 24 },
+  actions: { gap: 12, paddingHorizontal: 24 },
 });

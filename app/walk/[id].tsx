@@ -203,7 +203,7 @@ export default function WalkDetailScreen() {
           />
 
           <View style={styles.content}>
-            <Text style={[styles.trackingLabel, { color: accent }]}>
+            <Text style={styles.trackingLabel}>
               {t('walks.trackingActive')}
             </Text>
 
@@ -219,7 +219,7 @@ export default function WalkDetailScreen() {
                 title={t('walks.endWalk')}
                 onPress={handleEnd}
                 loading={isSubmitting}
-                style={{ backgroundColor: errorColor, borderColor: errorColor }}
+                variant="danger"
               />
             </View>
           </View>
@@ -334,14 +334,25 @@ const styles = StyleSheet.create({
   content: { padding: 24, gap: 16 },
   dogPhoto: { width: '100%', height: 200 },
   dogInfo: { marginBottom: 4 },
-  dogName: { fontSize: 24, fontWeight: 'bold' },
+  dogName: { fontSize: 24, fontWeight: '800', letterSpacing: -0.3 },
   dogBreed: { fontSize: 14, marginTop: 2 },
   personCard: { marginBottom: 0 },
-  personLabel: { fontSize: 12, marginBottom: 6 },
+  personLabel: { fontSize: 12, marginBottom: 6, fontWeight: '600' },
   personRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  personName: { fontSize: 15, fontWeight: '500' },
+  personName: { fontSize: 15, fontWeight: '600' },
   statusCard: { alignItems: 'center', paddingVertical: 24 },
-  statusText: { fontSize: 15, textAlign: 'center' },
-  trackingLabel: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
+  statusText: { fontSize: 15, textAlign: 'center', fontWeight: '600' },
+  trackingLabel: {
+    fontSize: 14,
+    fontWeight: '700',
+    textAlign: 'center',
+    backgroundColor: '#2EC4B6',
+    color: '#FFFFFF',
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
   actions: { gap: 12, marginTop: 8 },
 });

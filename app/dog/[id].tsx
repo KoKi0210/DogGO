@@ -30,6 +30,9 @@ export default function DogDetailScreen() {
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const primary = useThemeColor({}, 'primary');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const surfaceSecondary = useThemeColor({}, 'surfaceSecondary');
+  const surfaceAccent = useThemeColor({}, 'surfaceAccent');
 
   useEffect(() => {
     let cancelled = false;
@@ -133,9 +136,9 @@ export default function DogDetailScreen() {
           <Text style={[styles.name, { color: text }]}>{dog.name}</Text>
 
           <View style={styles.infoGrid}>
-            <InfoItem label={t('dogs.breed')} value={dog.breed} textColor={text} labelColor={textSecondary} />
-            <InfoItem label={t('dogs.age')} value={dog.age ?? '—'} textColor={text} labelColor={textSecondary} />
-            <InfoItem label={t('dogs.size')} value={t(`dogs.${dog.size}`)} textColor={text} labelColor={textSecondary} />
+            <InfoItem label={t('dogs.breed')} value={dog.breed} textColor={text} labelColor={textSecondary} bgColor={surfaceSecondary} />
+            <InfoItem label={t('dogs.age')} value={dog.age ?? '—'} textColor={text} labelColor={textSecondary} bgColor={surfaceAccent} />
+            <InfoItem label={t('dogs.size')} value={t(`dogs.${dog.size}`)} textColor={text} labelColor={textSecondary} bgColor={surfacePrimary} />
           </View>
 
           {dog.description ? (
@@ -208,11 +211,11 @@ export default function DogDetailScreen() {
   );
 }
 
-function InfoItem({ label, value, textColor, labelColor }: {
-  label: string; value: string; textColor: string; labelColor: string;
+function InfoItem({ label, value, textColor, labelColor, bgColor }: {
+  label: string; value: string; textColor: string; labelColor: string; bgColor?: string;
 }) {
   return (
-    <View style={infoStyles.item}>
+    <View style={[infoStyles.item, bgColor ? { backgroundColor: bgColor } : undefined]}>
       <Text style={[infoStyles.label, { color: labelColor }]}>{label}</Text>
       <Text style={[infoStyles.value, { color: textColor }]}>{value}</Text>
     </View>
@@ -220,27 +223,27 @@ function InfoItem({ label, value, textColor, labelColor }: {
 }
 
 const infoStyles = StyleSheet.create({
-  item: { flex: 1 },
-  label: { fontSize: 12, marginBottom: 2 },
-  value: { fontSize: 16, fontWeight: '500' },
+  item: { flex: 1, padding: 12, borderRadius: 16 },
+  label: { fontSize: 12, marginBottom: 2, fontWeight: '600' },
+  value: { fontSize: 16, fontWeight: '700' },
 });
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  heroPhoto: { width: '100%', height: 250 },
+  heroPhoto: { width: '100%', height: 300 },
   heroPlaceholder: { alignItems: 'center', justifyContent: 'center' },
   heroEmoji: { fontSize: 64 },
   content: { padding: 24 },
-  name: { fontSize: 28, fontWeight: 'bold', marginBottom: 16 },
-  infoGrid: { flexDirection: 'row', gap: 16, marginBottom: 16 },
+  name: { fontSize: 32, fontWeight: '900', marginBottom: 16, letterSpacing: -0.5 },
+  infoGrid: { flexDirection: 'row', gap: 12, marginBottom: 16 },
   description: { fontSize: 15, lineHeight: 22, marginBottom: 16 },
   ownerCard: { marginBottom: 16 },
-  ownerLabel: { fontSize: 12, marginBottom: 8 },
+  ownerLabel: { fontSize: 12, marginBottom: 8, fontWeight: '600' },
   ownerRow: { flexDirection: 'row', alignItems: 'center' },
   ownerInfo: { marginLeft: 12 },
-  ownerName: { fontSize: 16, fontWeight: '500' },
+  ownerName: { fontSize: 16, fontWeight: '600' },
   ownerRole: { fontSize: 13, textTransform: 'capitalize' },
-  map: { height: 200, borderRadius: 12, overflow: 'hidden', marginBottom: 16 },
+  map: { height: 200, borderRadius: 20, overflow: 'hidden', marginBottom: 16 },
   actions: { gap: 12 },
 });

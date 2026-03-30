@@ -9,9 +9,7 @@ interface WalkStatsProps {
   durationSeconds?: number;
   liveFormat?: boolean;
   durationAsClock?: boolean;
-  /** Average speed in km/h. If not provided, calculated from distance/duration. */
   avgSpeed?: number;
-  /** Points earned (only shown if provided). */
   pointsEarned?: number;
 }
 
@@ -29,6 +27,8 @@ export function WalkStats({
   const textSecondary = useThemeColor({}, 'textSecondary');
   const primary = useThemeColor({}, 'primary');
   const accent = useThemeColor({}, 'accent');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const surfaceAccent = useThemeColor({}, 'surfaceAccent');
 
   const speed = avgSpeed ?? (durationMins > 0 ? (distanceKm / (durationMins / 60)) : 0);
 
@@ -57,35 +57,21 @@ export function WalkStats({
 
   return (
     <View style={styles.container}>
-      <Card style={styles.card}>
-        <Text style={[styles.value, { color: primary }]}>
-          {distanceText}
-        </Text>
-        <Text style={[styles.label, { color: textSecondary }]}>
-          {distanceLabel}
-        </Text>
+      <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfacePrimary }]}>
+        <Text style={[styles.value, { color: primary }]}>{distanceText}</Text>
+        <Text style={[styles.label, { color: textSecondary }]}>{distanceLabel}</Text>
       </Card>
-      <Card style={styles.card}>
-        <Text style={[styles.value, { color: text }]}>
-          {durationText}
-        </Text>
-        <Text style={[styles.label, { color: textSecondary }]}>
-          {durationLabel}
-        </Text>
+      <Card shadowLevel="sm" style={styles.card}>
+        <Text style={[styles.value, { color: text }]}>{durationText}</Text>
+        <Text style={[styles.label, { color: textSecondary }]}>{durationLabel}</Text>
       </Card>
-      <Card style={styles.card}>
-        <Text style={[styles.value, { color: accent }]}>
-          {speed.toFixed(1)}
-        </Text>
-        <Text style={[styles.label, { color: textSecondary }]}>
-          {t('walks.kmh')}
-        </Text>
+      <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfaceAccent }]}>
+        <Text style={[styles.value, { color: accent }]}>{speed.toFixed(1)}</Text>
+        <Text style={[styles.label, { color: textSecondary }]}>{t('walks.kmh')}</Text>
       </Card>
       {pointsEarned != null && (
-        <Card style={styles.card}>
-          <Text style={[styles.value, { color: primary }]}>
-            {pointsEarned}
-          </Text>
+        <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfacePrimary }]}>
+          <Text style={[styles.value, { color: primary }]}>{pointsEarned}</Text>
           <Text style={[styles.label, { color: textSecondary }]}>pts</Text>
         </Card>
       )}
@@ -101,16 +87,16 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 10,
   },
   value: {
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: '800',
   },
   label: {
-    fontSize: 11,
+    fontSize: 12,
     marginTop: 2,
-    fontWeight: '500',
+    fontWeight: '600',
   },
 });

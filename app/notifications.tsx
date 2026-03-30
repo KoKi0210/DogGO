@@ -93,5 +93,5 @@ const styles = StyleSheet.create({
   list: { padding: 16 },
   emptyContainer: { flex: 1 },
   markAllRow: { paddingHorizontal: 16, paddingTop: 8 },
-  markAllBtn: { alignSelf: 'flex-end', paddingHorizontal: 12, height: 32 },
+  markAllBtn: { alignSelf: 'flex-end', paddingHorizontal: 12, height: 36 },
 });
