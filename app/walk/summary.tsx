@@ -17,7 +17,7 @@ import { Review } from '@/types/database';
 export default function WalkSummaryScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { walkId } = useLocalSearchParams<{ walkId: string }>();
+  const { walkId, selfieUri } = useLocalSearchParams<{ walkId: string; selfieUri?: string }>();
   const { user } = useAuth();
   const { walk, isLoading } = useWalk(walkId ?? '');
   const { createReview, getReviewForWalk, isSubmitting: isReviewSubmitting } = useReviews();
@@ -56,8 +56,13 @@ export default function WalkSummaryScreen() {
   const route = (walk.route_coordinates ?? []) as { lat: number; lng: number }[];
   const distanceKm = walk.distance_km ?? 0;
   const durationMins = walk.duration_mins ?? 0;
+  const durationSeconds = walk.started_at && walk.ended_at
+    ? Math.max(0, Math.round((new Date(walk.ended_at).getTime() - new Date(walk.started_at).getTime()) / 1000))
+    : Math.max(0, Math.round(durationMins * 60));
   const pointsEarned = walk.points_earned ?? 0;
   const dog = walk.dog;
+  const fallbackSelfieUri = typeof selfieUri === 'string' ? decodeURIComponent(selfieUri) : null;
+  const selfieToShow = walk.selfie_url ?? fallbackSelfieUri;
   const isOwner = user?.id === walk.owner?.id;
   const canReview = isOwner && reviewChecked && !existingReview;
 
@@ -98,6 +103,8 @@ export default function WalkSummaryScreen() {
         <WalkStats
           distanceKm={distanceKm}
           durationMins={durationMins}
+          durationSeconds={durationSeconds}
+          durationAsClock
           pointsEarned={pointsEarned}
         />
 
@@ -145,10 +152,10 @@ export default function WalkSummaryScreen() {
         )}
 
         {/* Selfie */}
-        {walk.selfie_url && (
+        {selfieToShow && (
           <View style={styles.selfieSection}>
             <Text style={[styles.selfieLabel, { color: textSecondary }]}>📸</Text>
-            <Image source={{ uri: walk.selfie_url }} style={styles.selfieImage} />
+            <Image source={{ uri: selfieToShow }} style={styles.selfieImage} />
           </View>
         )}
 

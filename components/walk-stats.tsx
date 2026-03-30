@@ -8,6 +8,7 @@ interface WalkStatsProps {
   durationMins: number;
   durationSeconds?: number;
   liveFormat?: boolean;
+  durationAsClock?: boolean;
   /** Average speed in km/h. If not provided, calculated from distance/duration. */
   avgSpeed?: number;
   /** Points earned (only shown if provided). */
@@ -19,6 +20,7 @@ export function WalkStats({
   durationMins,
   durationSeconds,
   liveFormat,
+  durationAsClock,
   avgSpeed,
   pointsEarned,
 }: WalkStatsProps) {
@@ -44,12 +46,14 @@ export function WalkStats({
   }
 
   const shouldUseLiveFormat = liveFormat && durationSeconds != null;
+  const shouldUseClockDuration = durationAsClock || shouldUseLiveFormat;
+  const durationValueSeconds = durationSeconds ?? Math.max(0, Math.round(durationMins * 60));
   const distanceText = shouldUseLiveFormat ? formatLiveDistance(distanceKm) : distanceKm.toFixed(2);
-  const durationText = shouldUseLiveFormat
-    ? formatLiveDuration(durationSeconds)
+  const durationText = shouldUseClockDuration
+    ? formatLiveDuration(durationValueSeconds)
     : String(Math.round(durationMins));
   const distanceLabel = shouldUseLiveFormat ? 'KM:MM' : t('walks.km');
-  const durationLabel = shouldUseLiveFormat ? 'HH:MM:SS' : t('walks.min');
+  const durationLabel = shouldUseClockDuration ? 'HH:MM:SS' : t('walks.min');
 
   return (
     <View style={styles.container}>

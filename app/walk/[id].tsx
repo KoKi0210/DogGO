@@ -85,6 +85,7 @@ export default function WalkDetailScreen() {
 
           // Prompt for selfie
           let selfieUrl: string | null = null;
+          let selfiePreviewUri: string | null = null;
           try {
             const { status } = await ImagePicker.requestCameraPermissionsAsync();
             if (status === 'granted') {
@@ -94,8 +95,15 @@ export default function WalkDetailScreen() {
                 quality: 0.8,
                 base64: true,
               });
-              if (!photo.canceled && photo.assets[0].base64) {
-                selfieUrl = await uploadImage('walk-selfies', photo.assets[0].base64, 'selfie.jpg');
+              if (!photo.canceled && photo.assets[0]) {
+                selfiePreviewUri = photo.assets[0].uri;
+                if (photo.assets[0].base64) {
+                  try {
+                    selfieUrl = await uploadImage('walk-selfies', photo.assets[0].base64, 'selfie.jpg');
+                  } catch (uploadErr) {
+                    console.error('Selfie upload failed, using local preview only:', uploadErr);
+                  }
+                }
               }
             }
           } catch {
@@ -115,7 +123,9 @@ export default function WalkDetailScreen() {
               selfieUrl,
             });
 
-            router.replace(`/walk/summary?walkId=${id}`);
+            const summarySelfie = selfieUrl ?? selfiePreviewUri;
+            const selfieParam = summarySelfie ? `&selfieUri=${encodeURIComponent(summarySelfie)}` : '';
+            router.replace(`/walk/summary?walkId=${id}${selfieParam}`);
           } catch (err) {
             const msg = err instanceof Error ? err.message : 'Unknown error';
             Alert.alert(t('common.error'), msg);

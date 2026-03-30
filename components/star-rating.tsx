@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface StarRatingProps {
   rating: number;
@@ -9,6 +10,8 @@ interface StarRatingProps {
 }
 
 export function StarRating({ rating, maxRating = 5, size = 28, editable = false, onChange }: StarRatingProps) {
+  const selectedColor = useThemeColor({}, 'primary');
+
   return (
     <View style={styles.container}>
       {Array.from({ length: maxRating }, (_, i) => {
@@ -21,7 +24,12 @@ export function StarRating({ rating, maxRating = 5, size = 28, editable = false,
             onPress={() => editable && onChange?.(starIndex)}
             disabled={!editable}
             style={styles.star}>
-            <Text style={[{ fontSize: size, lineHeight: size + 6 }, !filled && styles.empty]}>
+            <Text
+              style={{
+                fontSize: size,
+                lineHeight: size + 6,
+                color: filled ? selectedColor : '#000000',
+              }}>
               {filled ? '★' : '☆'}
             </Text>
           </Pressable>
@@ -34,5 +42,4 @@ export function StarRating({ rating, maxRating = 5, size = 28, editable = false,
 const styles = StyleSheet.create({
   container: { flexDirection: 'row', gap: 2 },
   star: { padding: 2 },
-  empty: { opacity: 0.3 },
 });
