@@ -1,27 +1,55 @@
-import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
-import { useThemeColor } from '@/hooks/use-theme-color';
+import { Pressable, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
+import { ClayCard } from '@/components/clay-card';
+import { Radius } from '@/constants/theme';
 
 interface CardProps {
   children: React.ReactNode;
   onPress?: () => void;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  shadowLevel?: 'sm' | 'md' | 'lg';
+  radius?: number;
 }
 
-export function Card({ children, onPress, style }: CardProps) {
-  const card = useThemeColor({}, 'card');
-  const border = useThemeColor({}, 'border');
+const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
+const SPRING_OUT = { damping: 12, stiffness: 200, mass: 0.8 };
+
+export function Card({
+  children,
+  onPress,
+  style,
+  shadowLevel = 'md',
+  radius = Radius.lg,
+}: CardProps) {
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   const content = (
-    <View style={[styles.card, { backgroundColor: card, borderColor: border }, style]}>
+    <ClayCard shadowLevel={shadowLevel} radius={radius} style={[styles.card, style]}>
       {children}
-    </View>
+    </ClayCard>
   );
 
   if (onPress) {
     return (
-      <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}>
-        {content}
-      </Pressable>
+      <Animated.View style={animatedStyle}>
+        <Pressable
+          onPress={onPress}
+          onPressIn={() => {
+            scale.value = withSpring(0.96, SPRING_IN);
+          }}
+          onPressOut={() => {
+            scale.value = withSpring(1, SPRING_OUT);
+          }}>
+          {content}
+        </Pressable>
+      </Animated.View>
     );
   }
 
@@ -30,13 +58,6 @@ export function Card({ children, onPress, style }: CardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
     padding: 16,
-    borderWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
   },
 });

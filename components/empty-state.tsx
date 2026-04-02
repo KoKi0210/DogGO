@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button } from '@/components/button';
+import { Shadows } from '@/constants/theme';
 
 interface EmptyStateProps {
   icon?: string;
@@ -13,11 +14,14 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, message, actionLabel, onAction }: EmptyStateProps) {
   const textSecondary = useThemeColor({}, 'textSecondary');
   const text = useThemeColor({}, 'text');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
 
   return (
     <View style={styles.container}>
       {icon && (
-        <Text style={styles.icon}>{icon}</Text>
+        <View style={[styles.iconBlob, { backgroundColor: surfacePrimary }, Shadows.claySm[0]]}>
+          <Text style={styles.icon}>{icon}</Text>
+        </View>
       )}
       <Text style={[styles.title, { color: text }]}>{title}</Text>
       {message && (
@@ -37,20 +41,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 32,
   },
+  iconBlob: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
   icon: {
-    fontSize: 48,
-    marginBottom: 16,
+    fontSize: 40,
+    lineHeight: 48,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: '800',
     textAlign: 'center',
     marginBottom: 8,
+    letterSpacing: -0.3,
   },
   message: {
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
   },
   button: {
     marginTop: 24,

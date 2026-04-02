@@ -1,6 +1,15 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withRepeat,
+  withSequence,
+} from 'react-native-reanimated';
+import { useEffect } from 'react';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Notification, NotificationType } from '@/types/database';
+import { ClayCard } from '@/components/clay-card';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -17,44 +26,78 @@ const TYPE_ICONS: Record<NotificationType, string> = {
   leaderboard_change: '🏆',
 };
 
+const APPROVED_TYPES: NotificationType[] = ['walk_approved', 'walk_completed', 'adoption_approved'];
+
 export function NotificationItem({ notification, onPress }: NotificationItemProps) {
-  const cardBg = useThemeColor({}, 'card');
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const primary = useThemeColor({}, 'primary');
-  const border = useThemeColor({}, 'border');
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const surfaceAccent = useThemeColor({}, 'surfaceAccent');
 
   const icon = TYPE_ICONS[notification.type] ?? '🔔';
   const isUnread = !notification.read;
+  const isApproved = APPROVED_TYPES.includes(notification.type);
   const timeAgo = formatTimeAgo(notification.created_at);
 
-  return (
-    <Pressable
-      style={[
-        styles.card,
-        {
-          backgroundColor: isUnread ? primary + '08' : cardBg,
-          borderColor: isUnread ? primary + '30' : border,
-        },
-      ]}
-      onPress={onPress}
-      disabled={!onPress}>
-      <Text style={styles.icon}>{icon}</Text>
+  const pulseScale = useSharedValue(1);
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pulseScale.value }],
+  }));
 
-      <View style={styles.content}>
-        <View style={styles.titleRow}>
-          <Text style={[styles.title, { color: text }]} numberOfLines={1}>
-            {notification.title}
-          </Text>
-          {isUnread && <View style={[styles.unreadDot, { backgroundColor: primary }]} />}
+  useEffect(() => {
+    if (isUnread) {
+      pulseScale.value = withRepeat(
+        withSequence(
+          withSpring(1.3, { damping: 6, stiffness: 300 }),
+          withSpring(1.0, { damping: 8, stiffness: 300 })
+        ),
+        -1,
+        false
+      );
+    }
+  }, [isUnread]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <Pressable onPress={onPress} disabled={!onPress} style={styles.wrapper}>
+      <ClayCard
+        shadowLevel="sm"
+        radius={18}
+        style={[
+          styles.card,
+          isUnread && { backgroundColor: surfacePrimary },
+        ]}>
+        <View
+          style={[
+            styles.iconBlob,
+            { backgroundColor: isApproved ? surfaceAccent : surfacePrimary },
+          ]}>
+          <Text style={styles.icon}>{icon}</Text>
         </View>
-        {notification.body && (
-          <Text style={[styles.body, { color: textSecondary }]} numberOfLines={2}>
-            {notification.body}
-          </Text>
-        )}
-        <Text style={[styles.time, { color: textSecondary }]}>{timeAgo}</Text>
-      </View>
+
+        <View style={styles.content}>
+          <View style={styles.titleRow}>
+            <Text style={[styles.title, { color: text }]} numberOfLines={1}>
+              {notification.title}
+            </Text>
+            {isUnread && (
+              <Animated.View
+                style={[
+                  styles.unreadDot,
+                  { backgroundColor: primary },
+                  pulseStyle,
+                ]}
+              />
+            )}
+          </View>
+          {notification.body && (
+            <Text style={[styles.body, { color: textSecondary }]} numberOfLines={2}>
+              {notification.body}
+            </Text>
+          )}
+          <Text style={[styles.time, { color: textSecondary }]}>{timeAgo}</Text>
+        </View>
+      </ClayCard>
     </Pressable>
   );
 }
@@ -71,20 +114,25 @@ function formatTimeAgo(dateStr: string): string {
 }
 
 const styles = StyleSheet.create({
+  wrapper: { marginBottom: 12 },
   card: {
     flexDirection: 'row',
-    borderRadius: 12,
-    borderWidth: 1,
-    padding: 12,
-    marginBottom: 8,
+    padding: 14,
     gap: 12,
     alignItems: 'flex-start',
   },
-  icon: { fontSize: 24, marginTop: 2 },
+  iconBlob: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  icon: { fontSize: 22, lineHeight: 28 },
   content: { flex: 1, gap: 2 },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  title: { fontSize: 15, fontWeight: '600', flex: 1 },
-  unreadDot: { width: 8, height: 8, borderRadius: 4 },
+  title: { fontSize: 15, fontWeight: '700', flex: 1 },
+  unreadDot: { width: 10, height: 10, borderRadius: 5 },
   body: { fontSize: 13, lineHeight: 18 },
   time: { fontSize: 11, marginTop: 2 },
 });

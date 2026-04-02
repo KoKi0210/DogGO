@@ -56,6 +56,10 @@ export default function LoginScreen() {
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
+          {/* Decorative blobs */}
+          <View style={styles.blob1} />
+          <View style={styles.blob2} />
+          <View style={styles.blob3} />
           <Text style={[styles.logo, { color: primary }]}>DogGO</Text>
           <Text style={[styles.title, { color: text }]}>{t('auth.loginTitle')}</Text>
           <Text style={[styles.subtitle, { color: textSecondary }]}>
@@ -113,16 +117,46 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 40,
+    overflow: 'visible',
+  },
+  blob1: {
+    position: 'absolute',
+    top: -40,
+    left: -30,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#FF6B3520',
+  },
+  blob2: {
+    position: 'absolute',
+    top: -20,
+    right: -40,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#2EC4B620',
+  },
+  blob3: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#004E8920',
   },
   logo: {
-    fontSize: 48,
-    fontWeight: 'bold',
+    fontSize: 56,
+    fontWeight: '900',
     marginBottom: 8,
+    letterSpacing: -0.5,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '800',
     marginBottom: 4,
+    letterSpacing: -0.3,
   },
   subtitle: {
     fontSize: 16,

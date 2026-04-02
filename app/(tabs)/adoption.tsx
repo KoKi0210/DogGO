@@ -55,7 +55,18 @@ export default function AdoptionScreen() {
         contentContainerStyle={dogs.length === 0 ? styles.emptyContainer : styles.list}
         ListHeaderComponent={
           dogs.length > 0 ? (
-            <Text style={[styles.header, { color: text }]}>{t('adoption.availableDogs')}</Text>
+            <View>
+              {/* Decorative hero blob */}
+              <View style={styles.heroArea}>
+                <View style={[styles.heroBlob, { backgroundColor: primary + '15' }]}>
+                  <Text style={styles.heroEmoji}>❤️</Text>
+                </View>
+              </View>
+              <View style={styles.sectionHeader}>
+                <View style={[styles.accentBar, { backgroundColor: primary }]} />
+                <Text style={[styles.header, { color: text }]}>{t('adoption.availableDogs')}</Text>
+              </View>
+            </View>
           ) : null
         }
         ListEmptyComponent={
@@ -77,7 +88,30 @@ export default function AdoptionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  list: { padding: 16, paddingTop: 60 },
+  list: { padding: 16, paddingTop: 60, paddingBottom: 110 },
   emptyContainer: { flex: 1 },
-  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
+  heroArea: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  heroBlob: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroEmoji: { fontSize: 44, lineHeight: 52 },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  accentBar: {
+    width: 4,
+    height: 22,
+    borderRadius: 2,
+    marginRight: 10,
+  },
+  header: { fontSize: 22, fontWeight: '800', letterSpacing: -0.3 },
 });
