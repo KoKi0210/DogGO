@@ -22,10 +22,11 @@ import { Input } from '@/components/input';
 import { Card } from '@/components/card';
 import { Loading } from '@/components/loading';
 import { useThemeColor } from '@/hooks/use-theme-color';
-import { Dog, DogSize, DogStatus } from '@/types/database';
+import { Dog, DogSize, DogStatus, EnergyLevel } from '@/types/database';
 
 const SIZES: DogSize[] = ['small', 'medium', 'large'];
 const STATUSES: DogStatus[] = ['walk', 'adoption', 'both'];
+const ENERGY_LEVELS: EnergyLevel[] = ['low', 'medium', 'high'];
 
 const DEFAULT_REGION = {
   latitude: 42.6977,
@@ -58,6 +59,7 @@ export default function AddDogScreen() {
   const [description, setDescription] = useState('');
   const [size, setSize] = useState<DogSize>('medium');
   const [status, setStatus] = useState<DogStatus>('walk');
+  const [energyLevel, setEnergyLevel] = useState<EnergyLevel | null>(null);
   const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [latitude, setLatitude] = useState<number | null>(null);
@@ -91,6 +93,7 @@ export default function AddDogScreen() {
         setDescription(dog.description ?? '');
         setSize(dog.size);
         setStatus(dog.status);
+        setEnergyLevel(dog.energy_level);
         setLatitude(dog.latitude);
         setLongitude(dog.longitude);
         setExistingPhotoUrl(dog.photo_url);
@@ -180,6 +183,7 @@ export default function AddDogScreen() {
       size,
       age,
       status,
+      energyLevel,
       latitude,
       longitude,
       photoBase64,
@@ -339,6 +343,25 @@ export default function AddDogScreen() {
               >
                 <Text style={[styles.chipText, { color: status === s ? '#FFFFFF' : text }]}>
                   {t(`dogs.status${s.charAt(0).toUpperCase() + s.slice(1)}`)}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
+          {/* Energy Level Picker */}
+          <Text style={[styles.label, { color: textSecondary }]}>{t('dogs.energyLevel')}</Text>
+          <View style={styles.chipRow}>
+            {ENERGY_LEVELS.map((e) => (
+              <Pressable
+                key={e}
+                style={[
+                  styles.chip,
+                  { borderColor: energyLevel === e ? primary : border, backgroundColor: energyLevel === e ? primary : card },
+                ]}
+                onPress={() => setEnergyLevel(energyLevel === e ? null : e)}
+              >
+                <Text style={[styles.chipText, { color: energyLevel === e ? '#FFFFFF' : text }]}>
+                  {t(`filters.${e}`)}
                 </Text>
               </Pressable>
             ))}

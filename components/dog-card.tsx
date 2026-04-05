@@ -42,6 +42,7 @@ export function DogCard({ dog, distance, showStatusBadge, onPress }: DogCardProp
   const primary = useThemeColor({}, 'primary');
   const badgeColor = useThemeColor({}, BADGE_COLOR_KEY[dog.status]);
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const surfacePrimaryEnd = useThemeColor({}, 'surfacePrimaryEnd');
   const surfaceAccent = useThemeColor({}, 'surfaceAccent');
   const accent = useThemeColor({}, 'accent');
 
@@ -64,7 +65,7 @@ export function DogCard({ dog, distance, showStatusBadge, onPress }: DogCardProp
             </View>
           ) : (
             <LinearGradient
-              colors={[surfacePrimary, '#FFE0D0']}
+              colors={[surfacePrimary, surfacePrimaryEnd]}
               style={[styles.photoContainer, styles.photoPlaceholder]}>
               <Text style={styles.photoEmoji}>🐕</Text>
             </LinearGradient>

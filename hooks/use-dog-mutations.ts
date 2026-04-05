@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/auth-context';
 import { uploadImage, deleteImage, StorageBucket } from '@/lib/storage';
-import { Dog, DogSize, DogStatus } from '@/types/database';
+import { Dog, DogSize, DogStatus, EnergyLevel } from '@/types/database';
 
 const DOG_PHOTOS_BUCKET: StorageBucket = 'dog-photos';
 
@@ -13,6 +13,7 @@ export interface DogFormData {
   size: DogSize;
   age: string;
   status: DogStatus;
+  energyLevel: EnergyLevel | null;
   latitude: number | null;
   longitude: number | null;
   photoBase64: string | null;
@@ -42,6 +43,7 @@ export function useDogMutations() {
           size: form.size,
           age: form.age.trim() || null,
           status: form.status,
+          energy_level: form.energyLevel,
           latitude: form.latitude,
           longitude: form.longitude,
           photo_url: photoUrl,
@@ -78,6 +80,7 @@ export function useDogMutations() {
           size: form.size,
           age: form.age.trim() || null,
           status: form.status,
+          energy_level: form.energyLevel,
           latitude: form.latitude,
           longitude: form.longitude,
           photo_url: photoUrl,

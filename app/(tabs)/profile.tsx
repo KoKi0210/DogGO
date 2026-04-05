@@ -31,6 +31,8 @@ export default function ProfileScreen() {
   const accent = useThemeColor({}, 'accent');
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
   const surfaceAccent = useThemeColor({}, 'surfaceAccent');
+  const surfacePrimaryEnd = useThemeColor({}, 'surfacePrimaryEnd');
+  const surfaceAccentEnd = useThemeColor({}, 'surfaceAccentEnd');
 
   useFocusEffect(
     useCallback(() => {
@@ -88,7 +90,7 @@ export default function ProfileScreen() {
       <View style={styles.statsRow}>
         <ClayCard shadowLevel="md" radius={20} style={{ flex: 1, padding: 0 }}>
           <LinearGradient
-            colors={[surfacePrimary, '#FFE0D0']}
+            colors={[surfacePrimary, surfacePrimaryEnd]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.statCardInner}>
@@ -102,7 +104,7 @@ export default function ProfileScreen() {
         </ClayCard>
         <ClayCard shadowLevel="md" radius={20} style={{ flex: 1, padding: 0 }}>
           <LinearGradient
-            colors={[surfaceAccent, '#D0F4F0']}
+            colors={[surfaceAccent, surfaceAccentEnd]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.statCardInner}>

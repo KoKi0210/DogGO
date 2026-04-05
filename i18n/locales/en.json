@@ -106,7 +106,9 @@
     "takePhoto": "Take Photo",
     "removePhoto": "Remove Photo",
     "setLocation": "Set Location",
-    "myActiveDogs": "My Active Dogs"
+    "myActiveDogs": "My Active Dogs",
+    "energyLevel": "Energy Level",
+    "selectEnergy": "Select energy level"
   },
   "walks": {
     "startWalk": "Start Walk",
@@ -161,7 +163,10 @@
     "onlyOwnerCanStartOwnDogWalk": "Only the owner can start a walk with this dog",
     "km": "km",
     "min": "min",
-    "kmh": "km/h"
+    "kmh": "km/h",
+    "errors": {
+      "selfWalk": "You cannot request a walk with your own dog."
+    }
   },
   "adoption": {
     "adopt": "Adopt",
@@ -195,7 +200,10 @@
     "monthly": "Monthly",
     "allTime": "All Time",
     "noEntries": "No entries yet",
-    "noEntriesMessage": "Complete walks to appear on the leaderboard"
+    "noEntriesMessage": "Complete walks to appear on the leaderboard",
+    "you": "You",
+    "pts": "pts",
+    "rankings": "Rankings"
   },
   "notifications": {
     "title": "Notifications",
@@ -212,7 +220,13 @@
     "yourReview": "Your Review"
   },
   "filters": {
+    "title": "Filters",
+    "clearAll": "Clear all",
     "distance": "Distance",
-    "any": "Any"
+    "any": "Any",
+    "energyLevel": "Energy",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
   }
 }

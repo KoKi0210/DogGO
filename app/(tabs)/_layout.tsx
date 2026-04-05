@@ -37,6 +37,8 @@ export default function TabLayout() {
   const { pendingWalks } = usePendingRequests();
   const { unreadCount, refresh: refreshNotifications } = useNotifications();
 
+  const card = Colors[colorScheme ?? 'light'].card;
+
   const pendingCount = pendingWalks.length;
   const background = Colors[colorScheme ?? 'light'].background;
 
@@ -86,7 +88,7 @@ export default function TabLayout() {
             <Pressable onPress={() => router.push('/notifications')} style={styles.bellBtn}>
               <IconSymbol size={24} name="bell.fill" color={Colors[colorScheme ?? 'light'].text} />
               {unreadCount > 0 && (
-                <View style={styles.bellBadge}>
+                <View style={[styles.bellBadge, { borderColor: card }]}>
                   <Text style={styles.bellBadgeText}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
                 </View>
               )}
@@ -117,7 +119,7 @@ export default function TabLayout() {
             <View>
               <IconSymbol size={28} name="person.fill" color={color} />
               {pendingCount > 0 && (
-                <View style={styles.tabBadge}>
+                <View style={[styles.tabBadge, { borderColor: card }]}>
                   <Text style={styles.tabBadgeText}>{pendingCount}</Text>
                 </View>
               )}
@@ -142,7 +144,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 4,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
   },
   tabBadgeText: {
     color: '#FFFFFF',
@@ -165,7 +166,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 4,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
   },
   bellBadgeText: {
     color: '#FFFFFF',

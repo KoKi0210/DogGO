@@ -38,6 +38,7 @@ export default function AdoptionDetailScreen() {
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const accent = useThemeColor({}, 'accent');
+  const placeholder = useThemeColor({}, 'placeholder');
 
   useEffect(() => {
     let cancelled = false;
@@ -153,7 +154,7 @@ export default function AdoptionDetailScreen() {
               {dog.photo_url ? (
                 <Image source={{ uri: dog.photo_url }} style={styles.dogPhoto} />
               ) : (
-                <View style={[styles.dogPhoto, styles.dogPhotoPlaceholder]}>
+                <View style={[styles.dogPhoto, styles.dogPhotoPlaceholder, { backgroundColor: placeholder }]}>
                   <Text style={styles.dogEmoji}>🐕</Text>
                 </View>
               )}
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
   dogCard: {},
   dogRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   dogPhoto: { width: 64, height: 64, borderRadius: 12 },
-  dogPhotoPlaceholder: { backgroundColor: '#F0F0F0', alignItems: 'center', justifyContent: 'center' },
+  dogPhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
   dogEmoji: { fontSize: 28 },
   dogInfo: {},
   dogName: { fontSize: 18, fontWeight: '600' },

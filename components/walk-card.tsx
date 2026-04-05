@@ -40,6 +40,7 @@ export function WalkCard({ walk, onPress }: WalkCardProps) {
   const textSecondary = useThemeColor({}, 'textSecondary');
   const badgeColor = useThemeColor({}, STATUS_COLOR_KEY[walk.status]);
   const surfaceAccent = useThemeColor({}, 'surfaceAccent');
+  const placeholder = useThemeColor({}, 'placeholder');
 
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({
@@ -62,7 +63,7 @@ export function WalkCard({ walk, onPress }: WalkCardProps) {
               <Image source={{ uri: dog.photo_url }} style={styles.photo} />
             </View>
           ) : (
-            <View style={[styles.photoContainer, styles.photoPlaceholder]}>
+            <View style={[styles.photoContainer, styles.photoPlaceholder, { backgroundColor: placeholder }]}>
               <Text style={styles.photoEmoji}>🐕</Text>
             </View>
           )}
@@ -117,7 +118,6 @@ const styles = StyleSheet.create({
   },
   photo: { width: 80, height: 80, resizeMode: 'cover' },
   photoPlaceholder: {
-    backgroundColor: '#F0F0F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
