@@ -27,7 +27,6 @@ export default function LeaderboardScreen() {
   const primary = useThemeColor({}, 'primary');
   const primaryLight = useThemeColor({}, 'primaryLight');
   const textSecondary = useThemeColor({}, 'textSecondary');
-  const text = useThemeColor({}, 'text');
 
   const { entries, isLoading, refresh } = useLeaderboard(activePeriod);
 
@@ -100,12 +99,7 @@ export default function LeaderboardScreen() {
                 )}
               </View>
               {restEntries.length > 0 && (
-                <View style={styles.sectionHeader}>
-                  <View style={[styles.accentBar, { backgroundColor: primary }]} />
-                  <Text style={[styles.sectionTitle, { color: text }]}>
-                    {t(`leaderboard.${activePeriod}`)}
-                  </Text>
-                </View>
+                <View style={styles.sectionDivider} />
               )}
             </View>
           ) : null
@@ -214,17 +208,10 @@ const styles = StyleSheet.create({
   podiumSide: {
     flex: 31,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  sectionDivider: {
+    height: 1,
+    backgroundColor: 'rgba(128,128,128,0.15)',
+    marginHorizontal: 16,
     marginBottom: 12,
-    paddingHorizontal: 16,
   },
-  accentBar: {
-    width: 4,
-    height: 20,
-    borderRadius: 2,
-    marginRight: 10,
-  },
-  sectionTitle: { fontSize: 18, fontWeight: '800', letterSpacing: -0.3 },
 });

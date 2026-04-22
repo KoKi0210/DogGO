@@ -27,6 +27,8 @@ export default function WalkSummaryScreen() {
   const textSecondary = useThemeColor({}, 'textSecondary');
   const primary = useThemeColor({}, 'primary');
   const accent = useThemeColor({}, 'accent');
+  const placeholder = useThemeColor({}, 'placeholder');
+  const border = useThemeColor({}, 'border');
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -126,7 +128,7 @@ export default function WalkSummaryScreen() {
             </View>
           )}
 
-          <View style={[styles.pointsRow, styles.totalRow]}>
+          <View style={[styles.pointsRow, styles.totalRow, { borderTopColor: border }]}>
             <Text style={[styles.totalLabel, { color: primary }]}>{t('walks.totalPoints')}</Text>
             <Text style={[styles.totalValue, { color: primary }]}>{pointsEarned}</Text>
           </View>
@@ -139,7 +141,7 @@ export default function WalkSummaryScreen() {
               {dog.photo_url ? (
                 <Image source={{ uri: dog.photo_url }} style={styles.dogPhoto} />
               ) : (
-                <View style={[styles.dogPhoto, styles.dogPhotoPlaceholder]}>
+                <View style={[styles.dogPhoto, styles.dogPhotoPlaceholder, { backgroundColor: placeholder }]}>
                   <Text style={styles.dogEmoji}>🐕</Text>
                 </View>
               )}
@@ -214,13 +216,13 @@ const styles = StyleSheet.create({
   pointsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   pointsLabel: { fontSize: 14 },
   pointsValue: { fontSize: 14, fontWeight: '500' },
-  totalRow: { borderTopWidth: 1, borderTopColor: '#E0E0E0', paddingTop: 8, marginTop: 4 },
+  totalRow: { borderTopWidth: 1, borderTopColor: undefined, paddingTop: 8, marginTop: 4 },
   totalLabel: { fontSize: 16, fontWeight: '700' },
   totalValue: { fontSize: 24, fontWeight: '900' },
   dogCard: {},
   dogRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   dogPhoto: { width: 56, height: 56, borderRadius: 16 },
-  dogPhotoPlaceholder: { backgroundColor: '#F0F0F0', alignItems: 'center', justifyContent: 'center' },
+  dogPhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
   dogEmoji: { fontSize: 24 },
   dogInfo: {},
   dogName: { fontSize: 16, fontWeight: '700' },

@@ -22,9 +22,10 @@ export function WalkMap({
 }: WalkMapProps) {
   const primary = useThemeColor({}, 'primary');
   const accent = useThemeColor({}, 'accent');
+  const placeholder = useThemeColor({}, 'placeholder');
 
   if (route.length === 0) {
-    return <View style={[styles.placeholder, { height }]} />;
+    return <View style={[styles.placeholder, { height, backgroundColor: placeholder }]} />;
   }
 
   const coordinates = route.map((p) => ({ latitude: p.lat, longitude: p.lng }));
@@ -86,7 +87,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   placeholder: {
-    backgroundColor: '#E0E0E0',
     borderRadius: 12,
   },
 });

@@ -11,7 +11,7 @@ interface StarRatingProps {
 
 export function StarRating({ rating, maxRating = 5, size = 28, editable = false, onChange }: StarRatingProps) {
   const selectedColor = useThemeColor({}, 'primary');
-  const emptyColor = useThemeColor({}, 'border');
+  const emptyColor = useThemeColor({}, 'textSecondary');
 
   return (
     <View style={styles.container}>

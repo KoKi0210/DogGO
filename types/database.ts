@@ -5,6 +5,7 @@
 export type UserRole = 'user' | 'shelter' | 'volunteer';
 export type DogStatus = 'walk' | 'adoption' | 'both' | 'adopted';
 export type DogSize = 'small' | 'medium' | 'large';
+export type EnergyLevel = 'low' | 'medium' | 'high';
 export type WalkStatus = 'requested' | 'approved' | 'active' | 'completed' | 'cancelled';
 export type AdoptionStatus = 'pending' | 'approved' | 'rejected';
 export type NotificationType =
@@ -43,6 +44,7 @@ export interface Dog {
   status: DogStatus;
   size: DogSize;
   age: string | null;
+  energy_level: EnergyLevel | null;
   latitude: number | null;
   longitude: number | null;
   ar_model_url: string | null;

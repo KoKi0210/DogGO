@@ -1,14 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/auth-context';
-import { Dog } from '@/types/database';
+import { Dog, DogSize, EnergyLevel } from '@/types/database';
 import { calculateDistance } from '@/lib/location';
 
 export interface DogWithDistance extends Dog {
   distance: number | null;
 }
 
-export function useNearbyDogs(userLat: number | null, userLon: number | null) {
+export function useNearbyDogs(
+  userLat: number | null,
+  userLon: number | null,
+  selectedSizes?: DogSize[],
+  maxDistance?: number | null,
+  energyLevel?: EnergyLevel | null,
+) {
   const { user } = useAuth();
   const [dogs, setDogs] = useState<DogWithDistance[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,16 +27,32 @@ export function useNearbyDogs(userLat: number | null, userLon: number | null) {
       setIsLoading(true);
       setError(null);
 
-      const { data, error: queryError } = await supabase
+      let query = supabase
         .from('dogs')
         .select('*')
         .in('status', ['walk', 'both'])
         .neq('owner_id', user.id)
         .order('created_at', { ascending: false });
 
+      if (selectedSizes && selectedSizes.length > 0) {
+        query = query.in('size', selectedSizes);
+      }
+
+      if (energyLevel) {
+        query = query.eq('energy_level', energyLevel);
+      }
+
+      const { data, error: queryError } = await query;
+
       if (queryError) throw queryError;
 
-      setDogs(computeDistances(data ?? [], userLat, userLon));
+      let result = computeDistances(data ?? [], userLat, userLon);
+
+      if (maxDistance != null) {
+        result = result.filter((d) => d.distance == null || d.distance <= maxDistance);
+      }
+
+      setDogs(result);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch nearby dogs';
       setError(message);
@@ -38,17 +60,13 @@ export function useNearbyDogs(userLat: number | null, userLon: number | null) {
     } finally {
       setIsLoading(false);
     }
-  }, [user, userLat, userLon]);
+  }, [user, userLat, userLon, selectedSizes, maxDistance, energyLevel]);
 
   useEffect(() => {
     let cancelled = false;
 
     fetchDogs().then(() => {
-      // fetchDogs handles its own state; cancelled flag prevents stale updates
-      // if the hook unmounts before fetchDogs completes.
-      if (cancelled) {
-        // Reset to avoid stale state lingering; a fresh mount will re-fetch.
-      }
+      if (cancelled) { /* unmounted */ }
     });
 
     return () => { cancelled = true; };

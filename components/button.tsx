@@ -14,6 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Shadows, Radius } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface ButtonProps {
   title: string;
@@ -40,6 +41,8 @@ export function Button({
   const secondary = useThemeColor({}, 'secondary');
   const secondaryLight = useThemeColor({}, 'secondaryLight');
   const error = useThemeColor({}, 'error');
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({
@@ -97,7 +100,7 @@ export function Button({
           </View>
         ) : (
           <LinearGradient
-            colors={isDisabled ? ['#CCCCCC', '#BBBBBB'] as [string, string] : gradientColors}
+            colors={isDisabled ? (isDark ? ['#3A3A3A', '#2E2E2E'] : ['#CCCCCC', '#BBBBBB']) as [string, string] : gradientColors}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.button}>

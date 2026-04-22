@@ -13,6 +13,15 @@ export function useWalkMutations() {
     if (!user) throw new Error('User not authenticated');
     setIsSubmitting(true);
     try {
+      const { data: dog, error: dogError } = await supabase
+        .from('dogs')
+        .select('owner_id')
+        .eq('id', dogId)
+        .single();
+
+      if (dogError) throw dogError;
+      if (dog?.owner_id === user.id) throw new Error('SELF_WALK');
+
       const { data, error } = await supabase
         .from('walks')
         .insert({ walker_id: user.id, dog_id: dogId, status: 'requested' })

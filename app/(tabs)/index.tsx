@@ -16,9 +16,10 @@ import { getCurrentLocation } from '@/lib/location';
 import { DogCard } from '@/components/dog-card';
 import { EmptyState } from '@/components/empty-state';
 import { ClayCard } from '@/components/clay-card';
+import { FilterBar } from '@/components/filter-bar';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Shadows } from '@/constants/theme';
-import { Dog } from '@/types/database';
+import { Dog, DogSize, EnergyLevel } from '@/types/database';
 
 const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
 const SPRING_OUT = { damping: 10, stiffness: 200, mass: 0.8 };
@@ -33,10 +34,14 @@ export default function HomeScreen() {
   const primaryLight = useThemeColor({}, 'primaryLight');
   const accent = useThemeColor({}, 'accent');
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const surfacePrimaryEnd = useThemeColor({}, 'surfacePrimaryEnd');
   const textSecondary = useThemeColor({}, 'textSecondary');
 
   const [userLat, setUserLat] = useState<number | null>(null);
   const [userLon, setUserLon] = useState<number | null>(null);
+  const [selectedSizes, setSelectedSizes] = useState<DogSize[]>([]);
+  const [maxDistance, setMaxDistance] = useState<number | null>(null);
+  const [energyLevel, setEnergyLevel] = useState<EnergyLevel | null>(null);
 
   useEffect(() => {
     getCurrentLocation().then((loc) => {
@@ -47,7 +52,7 @@ export default function HomeScreen() {
     });
   }, []);
 
-  const { dogs, isLoading, refresh } = useNearbyDogs(userLat, userLon);
+  const { dogs, isLoading, refresh } = useNearbyDogs(userLat, userLon, selectedSizes, maxDistance, energyLevel);
   const { dogs: allMyDogs, refresh: refreshMyDogs } = useMyDogs();
   const { walks, refresh: refreshWalks } = useMyWalks();
 
@@ -72,6 +77,12 @@ export default function HomeScreen() {
   const navigateToAddDog = useCallback(() => {
     router.push('/dog/add');
   }, [router]);
+
+  const handleToggleSize = useCallback((size: DogSize) => {
+    setSelectedSizes((prev) =>
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+    );
+  }, []);
 
   const renderItem = useCallback(({ item }: { item: DogWithDistance }) => (
     <DogCard
@@ -146,13 +157,13 @@ export default function HomeScreen() {
             {profile && profile.streak_count > 0 && (
               <ClayCard shadowLevel="lg" radius={24} style={{ padding: 0 }}>
                 <LinearGradient
-                  colors={[surfacePrimary, '#FFE4D0']}
+                  colors={[surfacePrimary, surfacePrimaryEnd]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.streakCard}>
                   {/* Decorative blob */}
                   <View style={styles.streakBlob} />
-                  <View style={[styles.streakEmojiBlob, { backgroundColor: primary + '20' }]}>
+                  <View style={[styles.streakEmojiBlob, { backgroundColor: surfacePrimary }]}>
                     <Text style={styles.streakEmoji}>🔥</Text>
                   </View>
                   <View style={{ flex: 1 }}>
@@ -171,6 +182,16 @@ export default function HomeScreen() {
                 </LinearGradient>
               </ClayCard>
             )}
+
+            {/* Filters */}
+            <FilterBar
+              selectedSizes={selectedSizes}
+              onToggleSize={handleToggleSize}
+              maxDistance={maxDistance}
+              onChangeDistance={setMaxDistance}
+              energyLevel={energyLevel}
+              onChangeEnergy={setEnergyLevel}
+            />
 
             {dogs.length > 0 && (
               <View style={styles.sectionHeader}>
@@ -262,7 +283,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#FF9A6C20',
+    backgroundColor: '#FF9A6C30',
   },
   streakEmojiBlob: {
     width: 64,

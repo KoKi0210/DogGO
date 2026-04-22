@@ -6,7 +6,9 @@ import { useAdoptionDogs, AdoptionDog } from '@/hooks/use-adoption-dogs';
 import { getCurrentLocation } from '@/lib/location';
 import { DogCard } from '@/components/dog-card';
 import { EmptyState } from '@/components/empty-state';
+import { FilterBar } from '@/components/filter-bar';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { DogSize, EnergyLevel } from '@/types/database';
 
 export default function AdoptionScreen() {
   const { t } = useTranslation();
@@ -15,8 +17,13 @@ export default function AdoptionScreen() {
   const text = useThemeColor({}, 'text');
   const primary = useThemeColor({}, 'primary');
 
+  const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+
   const [userLat, setUserLat] = useState<number | null>(null);
   const [userLon, setUserLon] = useState<number | null>(null);
+  const [selectedSizes, setSelectedSizes] = useState<DogSize[]>([]);
+  const [maxDistance, setMaxDistance] = useState<number | null>(null);
+  const [energyLevel, setEnergyLevel] = useState<EnergyLevel | null>(null);
 
   useEffect(() => {
     getCurrentLocation().then((loc) => {
@@ -27,13 +34,19 @@ export default function AdoptionScreen() {
     });
   }, []);
 
-  const { dogs, isLoading, refresh } = useAdoptionDogs(userLat, userLon);
+  const { dogs, isLoading, refresh } = useAdoptionDogs(userLat, userLon, selectedSizes, maxDistance, energyLevel);
 
   useFocusEffect(
     useCallback(() => {
       refresh();
     }, [refresh])
   );
+
+  const handleToggleSize = useCallback((size: DogSize) => {
+    setSelectedSizes((prev) =>
+      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+    );
+  }, []);
 
   const renderItem = useCallback(({ item }: { item: AdoptionDog }) => (
     <DogCard
@@ -54,20 +67,31 @@ export default function AdoptionScreen() {
         keyExtractor={keyExtractor}
         contentContainerStyle={dogs.length === 0 ? styles.emptyContainer : styles.list}
         ListHeaderComponent={
-          dogs.length > 0 ? (
-            <View>
-              {/* Decorative hero blob */}
-              <View style={styles.heroArea}>
-                <View style={[styles.heroBlob, { backgroundColor: primary + '15' }]}>
-                  <Text style={styles.heroEmoji}>❤️</Text>
-                </View>
+          <View>
+            {/* Decorative hero blob */}
+            <View style={styles.heroArea}>
+              <View style={[styles.heroBlob, { backgroundColor: surfacePrimary }]}>
+                <Text style={styles.heroEmoji}>❤️</Text>
               </View>
+            </View>
+
+            {/* Filters */}
+            <FilterBar
+              selectedSizes={selectedSizes}
+              onToggleSize={handleToggleSize}
+              maxDistance={maxDistance}
+              onChangeDistance={setMaxDistance}
+              energyLevel={energyLevel}
+              onChangeEnergy={setEnergyLevel}
+            />
+
+            {dogs.length > 0 && (
               <View style={styles.sectionHeader}>
                 <View style={[styles.accentBar, { backgroundColor: primary }]} />
                 <Text style={[styles.header, { color: text }]}>{t('adoption.availableDogs')}</Text>
               </View>
-            </View>
-          ) : null
+            )}
+          </View>
         }
         ListEmptyComponent={
           !isLoading ? (

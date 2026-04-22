@@ -20,6 +20,8 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
   'heart.fill': 'favorite',
   'trophy.fill': 'emoji-events',
+  'medal.fill': 'military-tech',
+  'bell.fill': 'notifications',
   'person.fill': 'person',
 } as IconMapping;
 
