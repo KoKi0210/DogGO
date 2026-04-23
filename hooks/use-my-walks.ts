@@ -44,37 +44,8 @@ export function useMyWalks() {
   }, [user]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      if (!user) { setWalks([]); setIsLoading(false); return; }
-
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const { data, error: queryError } = await supabase
-          .from('walks')
-          .select('*, dog:dogs(*)')
-          .eq('walker_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (cancelled) return;
-        if (queryError) throw queryError;
-        setWalks((data as WalkHistoryItem[]) || []);
-      } catch (err) {
-        if (cancelled) return;
-        const message = err instanceof Error ? err.message : 'Failed to fetch walks';
-        setError(message);
-        setWalks([]);
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    load();
-    return () => { cancelled = true; };
-  }, [user]);
+    fetchWalks();
+  }, [fetchWalks]);
 
   return { walks, isLoading, error, refresh: fetchWalks };
 }

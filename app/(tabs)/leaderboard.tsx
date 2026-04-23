@@ -107,7 +107,7 @@ export default function LeaderboardScreen() {
         ListEmptyComponent={
           !isLoading && entries.length === 0 ? (
             <EmptyState
-              icon="🏆"
+              icon="trophy.fill"
               title={t('leaderboard.noEntries')}
               message={t('leaderboard.noEntriesMessage')}
             />

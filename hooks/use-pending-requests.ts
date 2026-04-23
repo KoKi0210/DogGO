@@ -18,19 +18,29 @@ export function usePendingRequests() {
     try {
       setIsLoading(true);
 
-      // Get walks for dogs owned by the current user that are in 'requested' status
+      // Get IDs of dogs owned by this user
+      const { data: myDogs } = await supabase
+        .from('dogs')
+        .select('id')
+        .eq('owner_id', user.id);
+
+      const myDogIds = (myDogs ?? []).map((d: { id: string }) => d.id);
+
+      if (myDogIds.length === 0) {
+        setPendingWalks([]);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('walks')
         .select('*, dog:dogs(*)')
         .eq('status', 'requested')
+        .in('dog_id', myDogIds)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // Filter to only walks for dogs owned by this user
-      const walks = (data ?? []) as unknown as PendingWalkRequest[];
-      const myPendingWalks = walks.filter((w) => w.dog && w.dog.owner_id === user.id);
-      setPendingWalks(myPendingWalks);
+      setPendingWalks((data ?? []) as unknown as PendingWalkRequest[]);
     } catch (err) {
       console.error('Error fetching pending requests:', err);
       setPendingWalks([]);

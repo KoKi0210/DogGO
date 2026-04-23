@@ -91,13 +91,13 @@ export function useWalkTracking() {
           distanceRef.current += segmentDist;
         }
 
-        routeRef.current = [...prev, point];
+        routeRef.current.push(point);
 
         const speed = location.coords.speed;
 
         setState((s) => ({
           ...s,
-          route: routeRef.current,
+          route: [...routeRef.current],
           distanceKm: Math.round(distanceRef.current * 100) / 100,
           currentSpeed: speed != null && speed >= 0 ? Math.round(speed * 3.6 * 10) / 10 : 0,
         }));

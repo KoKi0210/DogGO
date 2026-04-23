@@ -52,48 +52,8 @@ export function useWalk(walkId: string) {
   }, [walkId]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      if (!walkId) { setIsLoading(false); return; }
-
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const { data, error: queryError } = await supabase
-          .from('walks')
-          .select('*, dog:dogs(*, owner:profiles(*)), walker:profiles(*)')
-          .eq('id', walkId)
-          .single();
-
-        if (cancelled) return;
-        if (queryError) throw queryError;
-
-        const raw = data as Walk & {
-          dog: (Dog & { owner: Profile | null }) | null;
-          walker: Profile | null;
-        };
-
-        setWalk({
-          ...raw,
-          dog: raw.dog ? { ...raw.dog, owner: undefined } as unknown as Dog : null,
-          walker: raw.walker,
-          owner: raw.dog?.owner ?? null,
-        });
-      } catch (err) {
-        if (cancelled) return;
-        const message = err instanceof Error ? err.message : 'Failed to fetch walk';
-        setError(message);
-        console.error('Error fetching walk:', err);
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    }
-
-    load();
-    return () => { cancelled = true; };
-  }, [walkId]);
+    fetchWalk();
+  }, [fetchWalk]);
 
   return { walk, isLoading, error, refresh: fetchWalk };
 }

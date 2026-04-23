@@ -12,6 +12,7 @@ import { WalkMap } from '@/components/walk-map';
 import { WalkStats } from '@/components/walk-stats';
 import { StarRating } from '@/components/star-rating';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Review } from '@/types/database';
 
 export default function WalkSummaryScreen() {
@@ -93,7 +94,7 @@ export default function WalkSummaryScreen() {
       <Stack.Screen options={{ title: t('walks.walkSummary'), headerBackVisible: true }} />
       <ScrollView style={[styles.container, { backgroundColor: background }]} contentContainerStyle={styles.scrollContent}>
         <Text style={[styles.heading, { color: text }]}>
-          {t('walks.greatWalk')} 🎉
+          {t('walks.greatWalk')}
         </Text>
 
         {/* Route Map */}
@@ -142,7 +143,7 @@ export default function WalkSummaryScreen() {
                 <Image source={{ uri: dog.photo_url }} style={styles.dogPhoto} />
               ) : (
                 <View style={[styles.dogPhoto, styles.dogPhotoPlaceholder, { backgroundColor: placeholder }]}>
-                  <Text style={styles.dogEmoji}>🐕</Text>
+                  <IconSymbol name="pawprint.fill" size={28} color={primary} />
                 </View>
               )}
               <View style={styles.dogInfo}>
@@ -223,7 +224,6 @@ const styles = StyleSheet.create({
   dogRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   dogPhoto: { width: 56, height: 56, borderRadius: 16 },
   dogPhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  dogEmoji: { fontSize: 24 },
   dogInfo: {},
   dogName: { fontSize: 16, fontWeight: '700' },
   dogBreed: { fontSize: 13, marginTop: 2 },

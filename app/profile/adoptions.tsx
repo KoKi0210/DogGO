@@ -48,7 +48,7 @@ export default function AdoptionsScreen() {
       <View style={[styles.container, { backgroundColor: background }]}>
         {isEmpty && !isLoading ? (
           <EmptyState
-            icon="❤️"
+            icon="heart.fill"
             title={t('adoption.noAdoptions')}
             message={t('adoption.noAdoptionsMessage')}
           />

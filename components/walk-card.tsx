@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -9,6 +10,8 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { Walk, Dog, WalkStatus } from '@/types/database';
 import { formatDistance, formatDuration } from '@/lib/location';
 import { ClayCard } from '@/components/clay-card';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { SPRING_IN, SPRING_OUT } from '@/constants/animations';
 
 interface WalkCardProps {
   walk: Walk & { dog: Dog | null };
@@ -31,16 +34,14 @@ const STATUS_I18N: Record<WalkStatus, string> = {
   cancelled: 'walks.statusCancelled',
 };
 
-const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
-const SPRING_OUT = { damping: 12, stiffness: 200, mass: 0.8 };
-
-export function WalkCard({ walk, onPress }: WalkCardProps) {
+function WalkCardBase({ walk, onPress }: WalkCardProps) {
   const { t } = useTranslation();
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const badgeColor = useThemeColor({}, STATUS_COLOR_KEY[walk.status]);
   const surfaceAccent = useThemeColor({}, 'surfaceAccent');
   const placeholder = useThemeColor({}, 'placeholder');
+  const textOnPrimary = useThemeColor({}, 'textOnPrimary');
 
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({
@@ -64,7 +65,7 @@ export function WalkCard({ walk, onPress }: WalkCardProps) {
             </View>
           ) : (
             <View style={[styles.photoContainer, styles.photoPlaceholder, { backgroundColor: placeholder }]}>
-              <Text style={styles.photoEmoji}>🐕</Text>
+              <IconSymbol name="pawprint.fill" size={28} color={textSecondary} />
             </View>
           )}
 
@@ -74,7 +75,7 @@ export function WalkCard({ walk, onPress }: WalkCardProps) {
                 {dog?.name ?? 'Unknown Dog'}
               </Text>
               <View style={[styles.badge, { backgroundColor: badgeColor }]}>
-                <Text style={styles.badgeText}>{t(STATUS_I18N[walk.status])}</Text>
+                <Text style={[styles.badgeText, { color: textOnPrimary }]}>{t(STATUS_I18N[walk.status])}</Text>
               </View>
             </View>
 
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  photoEmoji: { fontSize: 28 },
+
   info: {
     flex: 1,
     padding: 10,
@@ -150,5 +151,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 12,
   },
-  badgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '700' },
+  badgeText: { fontSize: 10, fontWeight: '700' },
 });
+
+export const WalkCard = memo(WalkCardBase);

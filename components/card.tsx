@@ -6,6 +6,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { ClayCard } from '@/components/clay-card';
 import { Radius } from '@/constants/theme';
+import { SPRING_IN, SPRING_OUT } from '@/constants/animations';
 
 interface CardProps {
   children: React.ReactNode;
@@ -14,9 +15,6 @@ interface CardProps {
   shadowLevel?: 'sm' | 'md' | 'lg';
   radius?: number;
 }
-
-const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
-const SPRING_OUT = { damping: 12, stiffness: 200, mass: 0.8 };
 
 export function Card({
   children,

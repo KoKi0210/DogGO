@@ -41,8 +41,8 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
-    } catch (error: any) {
-      Alert.alert(t('common.error'), error.message);
+    } catch (error: unknown) {
+      Alert.alert(t('common.error'), error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }

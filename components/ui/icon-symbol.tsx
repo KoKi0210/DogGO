@@ -23,6 +23,13 @@ const MAPPING = {
   'medal.fill': 'military-tech',
   'bell.fill': 'notifications',
   'person.fill': 'person',
+  'pawprint.fill': 'pets',
+  'flame.fill': 'local-fire-department',
+  'checkmark.circle.fill': 'check-circle',
+  'figure.walk': 'directions-walk',
+  'figure.run': 'directions-run',
+  'party.popper': 'celebration',
+  'star.fill': 'star',
 } as IconMapping;
 
 /**

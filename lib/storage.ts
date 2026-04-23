@@ -13,14 +13,28 @@ export async function uploadImage(
   fileName: string
 ): Promise<string> {
   try {
+    const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+    const extension = (fileName.split('.').pop() || 'jpg').toLowerCase();
+
+    if (!ALLOWED_EXTENSIONS.includes(extension)) {
+      throw new Error('Invalid image format. Only JPG, PNG, WebP and GIF are allowed.');
+    }
+
+    const MIME_MAP: Record<string, string> = {
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      webp: 'image/webp',
+      gif: 'image/gif',
+    };
+
     const timestamp = Date.now();
-    const extension = fileName.split('.').pop() || 'jpg';
     const uniqueFileName = `${timestamp}_${Math.random().toString(36).substring(2, 9)}.${extension}`;
 
     const { data, error } = await supabase.storage
       .from(bucket)
       .upload(uniqueFileName, decode(base64), {
-        contentType: `image/${extension}`,
+        contentType: MIME_MAP[extension],
         upsert: false,
       });
 

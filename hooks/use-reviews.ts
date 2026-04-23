@@ -14,6 +14,9 @@ export function useReviews() {
     comment?: string;
   }): Promise<Review> {
     if (!user) throw new Error('User not authenticated');
+    if (!Number.isInteger(data.rating) || data.rating < 1 || data.rating > 5) {
+      throw new Error('Rating must be an integer between 1 and 5');
+    }
     setIsSubmitting(true);
     try {
       const { data: review, error } = await supabase

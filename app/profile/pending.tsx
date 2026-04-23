@@ -38,7 +38,7 @@ export default function PendingRequestsScreen() {
           ListEmptyComponent={
             !isLoading ? (
               <EmptyState
-                icon="📬"
+                icon="paperplane.fill"
                 title={t('walks.noPendingWalks')}
               />
             ) : null

@@ -146,6 +146,13 @@ export function useWalkMutations() {
     if (!user) throw new Error('User not authenticated');
     setIsSubmitting(true);
     try {
+      if (data.distanceKm < 0 || data.distanceKm > 100) {
+        throw new Error('Invalid distance value');
+      }
+      if (data.durationMins < 0 || data.durationMins > 1440) {
+        throw new Error('Invalid duration value');
+      }
+
       const { basePoints, multiplier, totalPoints } = calculateTotalPoints(
         data.distanceKm,
         data.durationMins,
@@ -175,21 +182,7 @@ export function useWalkMutations() {
         points_to_add: totalPoints,
       });
 
-      // If the RPC doesn't exist yet, fallback to manual update
-      if (pointsError) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('total_points')
-          .eq('id', user.id)
-          .single();
-
-        if (profile) {
-          await supabase
-            .from('profiles')
-            .update({ total_points: profile.total_points + totalPoints })
-            .eq('id', user.id);
-        }
-      }
+      if (pointsError) throw pointsError;
 
       // Update streak (first walk of the day increments streak + awards bonus)
       const streakResult = await updateStreak();

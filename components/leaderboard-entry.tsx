@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ const MEDAL_ICON_COLORS: Record<number, { light: string; dark: string }> = {
   3: { light: '#B87333', dark: '#DBA06D' },
 };
 
-export function LeaderboardEntryCard({ entry, isPodium }: LeaderboardEntryCardProps) {
+function LeaderboardEntryCardBase({ entry, isPodium }: LeaderboardEntryCardProps) {
   const { t } = useTranslation();
   const { user } = useAuth();
   const colorScheme = useColorScheme();
@@ -202,3 +203,5 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+export const LeaderboardEntryCard = memo(LeaderboardEntryCardBase);
