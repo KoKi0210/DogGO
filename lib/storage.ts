@@ -3,6 +3,58 @@ import { decode } from 'base64-arraybuffer';
 
 export type StorageBucket = 'avatars' | 'dog-photos' | 'walk-selfies';
 
+function parseStorageObject(url: string): { bucket: string; path: string } | null {
+  const PUBLIC_SEGMENT = '/storage/v1/object/public/';
+  const SIGNED_SEGMENT = '/storage/v1/object/sign/';
+  const AUTH_SEGMENT = '/storage/v1/object/authenticated/';
+
+  const segment = [PUBLIC_SEGMENT, SIGNED_SEGMENT, AUTH_SEGMENT].find((part) => url.includes(part));
+  if (!segment) return null;
+
+  const [, objectPart] = url.split(segment);
+  if (!objectPart) return null;
+
+  const pathWithoutQuery = objectPart.split('?')[0];
+  const [bucket, ...pathParts] = pathWithoutQuery.split('/');
+  if (!bucket || pathParts.length === 0) return null;
+
+  return {
+    bucket,
+    path: decodeURIComponent(pathParts.join('/')),
+  };
+}
+
+/**
+ * Resolve an image URL to a loadable URL for the current user.
+ * For Supabase storage URLs, it attempts a signed URL and falls back to the original URL.
+ */
+export async function resolveImageUrl(url: string): Promise<string> {
+  const trimmed = url.trim();
+  if (!trimmed) return trimmed;
+
+  // Local device URIs should be used as-is.
+  if (trimmed.startsWith('file://') || trimmed.startsWith('content://')) {
+    return trimmed;
+  }
+
+  const parsed = parseStorageObject(trimmed);
+  if (!parsed) return trimmed;
+
+  try {
+    const { data, error } = await supabase.storage
+      .from(parsed.bucket)
+      .createSignedUrl(parsed.path, 60 * 60);
+
+    if (error || !data?.signedUrl) {
+      return trimmed;
+    }
+
+    return data.signedUrl;
+  } catch {
+    return trimmed;
+  }
+}
+
 /**
  * Upload an image to Supabase Storage.
  * Returns the public URL of the uploaded image.

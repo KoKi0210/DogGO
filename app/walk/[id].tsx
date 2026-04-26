@@ -123,9 +123,14 @@ export default function WalkDetailScreen() {
               selfieUrl,
             });
 
-            const summarySelfie = selfieUrl ?? selfiePreviewUri;
-            const selfieParam = summarySelfie ? `&selfieUri=${encodeURIComponent(summarySelfie)}` : '';
-            router.replace(`/walk/summary?walkId=${id}${selfieParam}`);
+            const params = [`walkId=${encodeURIComponent(id)}`];
+            if (selfieUrl) {
+              params.push(`selfieUploadedUri=${encodeURIComponent(selfieUrl)}`);
+            }
+            if (selfiePreviewUri) {
+              params.push(`selfieLocalUri=${encodeURIComponent(selfiePreviewUri)}`);
+            }
+            router.replace(`/walk/summary?${params.join('&')}`);
           } catch (err) {
             const msg = err instanceof Error ? err.message : 'Unknown error';
             Alert.alert(t('common.error'), msg);
