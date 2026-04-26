@@ -28,8 +28,8 @@
 2. **Supabase (backend platform)**
    - **Auth** (email/password, session lifecycle).
    - **Postgres** (основните бизнес таблици).
-   - **RLS policies** (контрол на достъпа на ниво редове).
-   - **RPC функции** (атомарна бизнес логика server-side).
+   - **RLS (Row Level Security) policies** (контрол на достъпа на ниво редове).
+   - **RPC (Remote Procedure Call) функции** (атомарна бизнес логика server-side).
    - **Triggers** (автоматични реакции при събития).
    - **Storage** (снимки за профили/кучета/селфита).
 
@@ -76,7 +76,7 @@
 Сървърната част е отговорна за:
 - данни и консистентност,
 - права и защита (RLS),
-- бизнес правила, които не трябва да се доверяват на клиента,
+- бизнес правила,
 - атомарни операции,
 - автоматични нотификации/side effects.
 
@@ -162,7 +162,7 @@
 - `contexts/` - app-level context (`AuthProvider`).
 - `lib/` - infra/helpers.
 - `supabase/migrations/` - schema и SQL логика.
-- `types/database.ts` - домейн типове (client mirror на DB модела).
+- `types/database.ts` - домейн типове.
 
 ---
 
@@ -173,7 +173,7 @@
 1. **profiles**
    - profile информация, език, точки, streak.
 2. **dogs**
-   - кучета, owner, статус, локация, енергийно ниво.
+   - кучета, собственик, статус, локация, енергийно ниво.
 3. **walks**
    - lifecycle и метрики на разходка.
 4. **adoption_requests**
@@ -204,8 +204,8 @@
 ## 8.2 Home + nearby dogs flow
 
 1. Home взима текуща локация (`getCurrentLocation`).
-2. Hook `useNearbyDogs` чете кучета (`status in ['walk','both']`, не мои).
-3. На client се смята дистанция за сортиране/филтри.
+2. Hook `useNearbyDogs` чете кучета (`status in ['walk','both']`).
+3. Смята се дистанция за сортиране/филтри.
 4. UI показва карти + филтри + active walk banner.
 
 ## 8.3 Dog CRUD flow
@@ -231,7 +231,7 @@
    - update `walks` с метрики и route,
    - `increment_points` за walker,
    - `update_streak` бонус.
-6. **Summary**: карта + статистики + селфи + review.
+6. **Summary**: карта + статистики + селфи + ревю.
 
 ## 8.5 Adoption flow
 
@@ -325,11 +325,11 @@ npx expo start
 1. Hook-базиран data слой вместо централен state manager.
 2. Част от логиката (напр. live distance sort) е client-side за бърз UX.
 3. Критичните домейн действия (осиновяване бонус, leaderboard SQL) са server-side.
-4. Нотификациите в момента са in-app (DB + realtime), не native push като source of truth.
+4. Нотификациите в момента са in-app (DB + realtime).
 
 ---
 
-## 14. Какво би било добре да се надгради
+## 14. Какво би било добре да се надгради ????!!!!(май да ги махнем/променим тея неща)
 
 1. Централизиран cache/invalidation (напр. React Query).
 2. Unified error taxonomy (domain errors + user-friendly messages).
@@ -339,40 +339,179 @@ npx expo start
 
 ---
 
-## 15. Бърз onboarding за нов разработчик
+## 15. Карта на действията: App -> RPC/Trigger -> Промени в БД
 
-1. Настрой `.env` с Supabase URL/Anon key.
-2. Пусни SQL миграциите.
-3. Създай Storage buckets и политики.
-4. Стартирай приложението и тествай базовите flow-ове:
-   - register/login,
-   - add dog,
-   - request/approve/start/end walk,
-   - adoption request/approve,
-   - notifications + leaderboard.
+| Действие в приложението | Механизъм | Къде е дефиниран | Какво променя |
+| --- | --- | --- | --- |
+| Регистрация на нов потребител | Trigger `on_auth_user_created` -> `handle_new_user` | `supabase/migrations/001_initial_schema.sql` | Insert в `profiles` |
+| Заявка за разходка | Insert в `walks` + Trigger `on_walk_requested` | Insert от `hooks/use-walk-mutations.ts`, trigger в `supabase/migrations/003_notification_triggers.sql` | Нов ред в `walks` + insert в `notifications` |
+| Одобряване на разходка | Update `walks.status='approved'` + Trigger `on_walk_status_change` | Update от `hooks/use-walk-mutations.ts`, trigger в `supabase/migrations/003_notification_triggers.sql` | Update в `walks` + insert в `notifications` |
+| Стартиране на разходка | Update `walks.status='active'` + Trigger `on_walk_status_change` | Update от `hooks/use-walk-mutations.ts`, trigger в `supabase/migrations/003_notification_triggers.sql` | Update в `walks` + insert в `notifications` |
+| Приключване на разходка | Update в `walks` + RPC `increment_points` + RPC `update_streak` + Trigger `on_walk_status_change` + Trigger `trg_leaderboard_change` (ако има rank промяна) | `hooks/use-walk-mutations.ts`, `hooks/use-streak.ts`, `supabase/migrations/002_indexes_rpc_functions.sql`, `supabase/migrations/003_notification_triggers.sql`, `supabase/migrations/004_energy_level_and_leaderboard_trigger.sql` | Update в `walks`, update в `profiles.total_points/streak`, insert в `notifications` |
+| Заявка за осиновяване | Insert в `adoption_requests` + Trigger `on_adoption_requested` | Insert от `hooks/use-adoption-mutations.ts`, trigger в `supabase/migrations/003_notification_triggers.sql` | Нов ред в `adoption_requests` + insert в `notifications` |
+| Одобряване на осиновяване | RPC `approve_adoption` + Trigger `on_adoption_approved` | RPC в `supabase/migrations/002_indexes_rpc_functions.sql`, trigger в `supabase/migrations/003_notification_triggers.sql` | Update в `adoption_requests`, update в `dogs.owner_id/status`, update в `profiles.total_points`, insert в `notifications` |
+| Зареждане на leaderboard | RPC `get_leaderboard` | `supabase/migrations/002_indexes_rpc_functions.sql` | Read-only агрегирана справка върху `walks` + `profiles` |
 
----
+### Забележка
 
-## 16. Кратък речник
-
-- **Client-side**: кодът, който работи в мобилното приложение.
-- **Server-side**: код/логика, която работи в Supabase/DB.
-- **RLS**: Row Level Security, контрол на достъпа по редове.
-- **RPC**: SQL функция извиквана като API операция.
-- **Trigger**: автоматична DB функция при insert/update/delete.
-- **BaaS**: Backend-as-a-Service (в случая Supabase).
+- **RPC** се вика изрично от клиента (`supabase.rpc(...)`) при целенасочена бизнес операция.
+- **Trigger** се изпълнява автоматично от базата след `INSERT/UPDATE`, без клиентът да го вика директно.
 
 ---
 
-## 17. Източници (по проекта)
+## 16. Визуални диаграми (Mermaid)
 
-- `app/`, `components/`, `hooks/`, `contexts/`, `lib/`
-- `types/database.ts`
-- `supabase/migrations/001_initial_schema.sql`
-- `supabase/migrations/002_indexes_rpc_functions.sql`
-- `supabase/migrations/003_notification_triggers.sql`
-- `supabase/migrations/004_energy_level_and_leaderboard_trigger.sql`
-- `supabase/migrations/005_walks_check_constraints.sql`
-- `DATABASE_SETUP.md`
+## 16.1 Архитектура: Client -> Supabase
+
+```mermaid
+flowchart LR
+  U[Потребител] --> UI[Expo/React Native UI\napp/* + components/*]
+  UI --> H[Hooks/Data Layer\nhooks/*]
+  H --> SDK[Supabase JS Client\nlib/supabase.ts]
+
+  SDK --> AUTH[Supabase Auth]
+  SDK --> DB[(Postgres DB)]
+  SDK --> ST[Supabase Storage]
+  SDK --> RT[Realtime Channels]
+
+  DB --> RLS[RLS Policies]
+  DB --> RPC[RPC Functions]
+  DB --> TRG[SQL Triggers]
+
+  RPC --> DB
+  TRG --> DB
+```
+
+## 16.2 Walk flow (end-to-end)
+
+```mermaid
+sequenceDiagram
+  participant W as Walker (App)
+  participant S as Supabase DB
+  participant O as Owner (App)
+
+  W->>S: INSERT walk (status=requested)
+  S-->>O: Trigger -> notification (walk_requested)
+
+  O->>S: UPDATE walk status=approved
+  S-->>W: Trigger -> notification (walk_approved)
+
+  W->>S: UPDATE walk status=active
+  S-->>O: Trigger -> notification (walk_started)
+
+  Note over W: GPS tracking (route, distance, duration, speed)
+
+  W->>S: UPDATE walk status=completed + metrics + route + selfie
+  W->>S: RPC increment_points(user_id, points)
+  W->>S: RPC update_streak(user_id)
+  S-->>O: Trigger -> notification (walk_completed)
+  S-->>W: Trigger leaderboard_change (ако rank се подобри в top 10)
+```
+
+## 16.3 Adoption flow (end-to-end)
+
+```mermaid
+sequenceDiagram
+  participant A as Adopter (App)
+  participant S as Supabase DB
+  participant D as Dog Owner (App)
+
+  A->>S: INSERT adoption_request (pending)
+  S-->>D: Trigger -> notification (adoption_request)
+
+  D->>S: RPC approve_adoption(request_id)
+  Note over S: Atomic operation:\n1) approve request\n2) transfer dog ownership\n3) reject other pending\n4) award adoption bonus points
+  S-->>A: Trigger -> notification (adoption_approved)
+```
+
+## 16.4 ER диаграма (основни таблици и връзки)
+
+```mermaid
+erDiagram
+  profiles ||--o{ dogs : owns
+  profiles ||--o{ walks : walker
+  dogs ||--o{ walks : walked_in
+  dogs ||--o{ adoption_requests : requested_for
+  profiles ||--o{ adoption_requests : adopter
+  walks ||--o| reviews : reviewed_by_owner
+  profiles ||--o{ reviews : owner_author
+  profiles ||--o{ reviews : walker_target
+  profiles ||--o{ notifications : receives
+
+  profiles {
+    uuid id PK
+    varchar display_name
+    varchar avatar_url
+    varchar role
+    varchar language
+    int total_points
+    int streak_count
+    date last_streak_date
+    varchar push_token
+  }
+
+  dogs {
+    uuid id PK
+    uuid owner_id FK
+    varchar name
+    varchar breed
+    varchar status
+    varchar size
+    varchar energy_level
+    decimal latitude
+    decimal longitude
+  }
+
+  walks {
+    uuid id PK
+    uuid walker_id FK
+    uuid dog_id FK
+    varchar status
+    timestamptz started_at
+    timestamptz ended_at
+    decimal distance_km
+    int duration_mins
+    int points_earned
+    decimal multiplier
+    jsonb route_coordinates
+    varchar selfie_url
+  }
+
+  adoption_requests {
+    uuid id PK
+    uuid dog_id FK
+    uuid adopter_id FK
+    varchar status
+    boolean points_awarded
+  }
+
+  reviews {
+    uuid id PK
+    uuid walker_id FK
+    uuid owner_id FK
+    uuid walk_id FK
+    int rating
+    text comment
+  }
+
+  notifications {
+    uuid id PK
+    uuid user_id FK
+    varchar type
+    varchar title
+    text body
+    varchar related_entity_type
+    uuid related_entity_id
+    boolean read
+  }
+```
+
+### Бележки към ER модела
+
+- `profiles -> dogs` е `1:N`: един профил може да има много кучета.
+- `profiles -> walks` е `1:N` (като walker), а `dogs -> walks` също е `1:N`.
+- `adoption_requests` е свързваща таблица между `profiles` (adopter) и `dogs`.
+- `reviews` свързва конкретна разходка (`walk_id`) с автор (owner) и оценяван (walker).
+- `notifications` е общ журнал за събития, адресиран към конкретен потребител (`user_id`).
 
 
