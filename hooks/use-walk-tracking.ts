@@ -70,12 +70,12 @@ export function useWalkTracking() {
     // Update duration every second
     timerRef.current = setInterval(updateDuration, 1000);
 
-    // Watch position every ~5 seconds
+    // Watch position frequently for smoother live stats updates.
     watchRef.current = await Location.watchPositionAsync(
       {
-        accuracy: Location.Accuracy.High,
-        timeInterval: 5000,
-        distanceInterval: 5,
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 100,
+        distanceInterval: 1,
       },
       (location) => {
         const point: RoutePoint = {

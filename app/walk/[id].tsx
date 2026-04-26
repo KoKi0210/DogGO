@@ -217,6 +217,7 @@ export default function WalkDetailScreen() {
               durationMins={tracking.durationMins}
               durationSeconds={tracking.durationSeconds}
               liveFormat
+              avgSpeed={tracking.currentSpeed}
             />
 
             <View style={styles.actions}>
