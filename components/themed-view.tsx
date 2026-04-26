@@ -7,6 +7,7 @@ export type ThemedViewProps = ViewProps & {
   darkColor?: string;
 };
 
+// TODO REMOVE COMPONENT AS IT IS NOT USED
 export function ThemedView({ style, lightColor, darkColor, ...otherProps }: ThemedViewProps) {
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 

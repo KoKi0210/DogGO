@@ -73,5 +73,6 @@ export function useReviews() {
     }
   }
 
+  // TODO REMOVE getReviewsForWalker
   return { createReview, getReviewsForWalker, getReviewForWalk, isSubmitting };
 }

@@ -140,7 +140,7 @@ function SegmentButton({
   }));
 
   return (
-    <Animated.View style={[{ flex: 1 }, animStyle]}>
+    <Animated.View style={[styles.segmentButton, animStyle]}>
       <Pressable
         onPress={onPress}
         onPressIn={() => { scale.value = withSpring(0.92, SPRING_IN); }}
@@ -151,11 +151,23 @@ function SegmentButton({
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.segment}>
-            <Text style={styles.segmentTextActive}>{label}</Text>
+            <Text
+              style={styles.segmentTextActive}
+              adjustsFontSizeToFit
+              minimumFontScale={0.75}
+              ellipsizeMode="tail">
+              {label}
+            </Text>
           </LinearGradient>
         ) : (
           <View style={styles.segment}>
-            <Text style={[styles.segmentText, { color: textSecondary }]}>{label}</Text>
+            <Text
+              style={[styles.segmentText, { color: textSecondary }]}
+              adjustsFontSizeToFit
+              minimumFontScale={0.75}
+              ellipsizeMode="tail">
+              {label}
+            </Text>
           </View>
         )}
       </Pressable>
@@ -177,8 +189,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 4,
   },
+  segmentButton: {
+    flex: 1,
+    minWidth: 0,
+  },
   segment: {
     paddingVertical: 10,
+    paddingHorizontal: 6,
     borderRadius: 28,
     alignItems: 'center',
   },
@@ -186,10 +203,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     color: '#FFFFFF',
+    textAlign: 'center',
+    width: '100%',
   },
   segmentText: {
     fontSize: 13,
     fontWeight: '600',
+    textAlign: 'center',
+    width: '100%',
   },
   list: { paddingHorizontal: 16, paddingBottom: 110 },
   emptyContainer: { flex: 1 },

@@ -82,6 +82,7 @@ export function formatDuration(minutes: number): string {
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
+// TODO REMOVE THIS
 /**
  * Calculate total distance from a series of coordinates.
  */

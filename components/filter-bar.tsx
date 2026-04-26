@@ -14,6 +14,7 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { Shadows } from '@/constants/theme';
 import { DogSize, EnergyLevel } from '@/types/database';
 
+// TODO REMOVE THIS COMPONENT AS IT IS NOT USED
 interface FilterBarProps {
   selectedSizes: DogSize[];
   onToggleSize: (size: DogSize) => void;
