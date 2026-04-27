@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -28,31 +29,34 @@ export function WalkMap({
     return <View style={[styles.placeholder, { height, backgroundColor: placeholder }]} />;
   }
 
-  const coordinates = route.map((p) => ({ latitude: p.lat, longitude: p.lng }));
-  const lastPoint = coordinates[coordinates.length - 1];
-  const firstPoint = coordinates[0];
+  const { coordinates, region, firstPoint, lastPoint } = useMemo(() => {
+    const coords = route.map((p) => ({ latitude: p.lat, longitude: p.lng }));
+    const last = coords[coords.length - 1];
+    const first = coords[0];
 
-  // Calculate region to fit all points
-  const lats = coordinates.map((c) => c.latitude);
-  const lngs = coordinates.map((c) => c.longitude);
-  const minLat = Math.min(...lats);
-  const maxLat = Math.max(...lats);
-  const minLng = Math.min(...lngs);
-  const maxLng = Math.max(...lngs);
+    const lats = coords.map((c) => c.latitude);
+    const lngs = coords.map((c) => c.longitude);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
 
-  const region = followUser
-    ? {
-        latitude: lastPoint.latitude,
-        longitude: lastPoint.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      }
-    : {
-        latitude: (minLat + maxLat) / 2,
-        longitude: (minLng + maxLng) / 2,
-        latitudeDelta: Math.max((maxLat - minLat) * 1.3, 0.005),
-        longitudeDelta: Math.max((maxLng - minLng) * 1.3, 0.005),
-      };
+    const reg = followUser
+      ? {
+          latitude: last.latitude,
+          longitude: last.longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        }
+      : {
+          latitude: (minLat + maxLat) / 2,
+          longitude: (minLng + maxLng) / 2,
+          latitudeDelta: Math.max((maxLat - minLat) * 1.3, 0.005),
+          longitudeDelta: Math.max((maxLng - minLng) * 1.3, 0.005),
+        };
+
+    return { coordinates: coords, region: reg, firstPoint: first, lastPoint: last };
+  }, [route, followUser]);
 
   return (
     <View style={[styles.container, { height }]}>

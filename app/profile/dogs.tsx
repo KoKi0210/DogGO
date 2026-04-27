@@ -43,7 +43,7 @@ export default function MyDogsScreen() {
           ListEmptyComponent={
             !isLoading ? (
               <EmptyState
-                icon="🐕"
+                icon="pawprint.fill"
                 title={t('profile.noDogs')}
                 message={t('profile.addFirstDog')}
                 actionLabel={t('dogs.addDog')}

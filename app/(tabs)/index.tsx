@@ -18,6 +18,7 @@ import { EmptyState } from '@/components/empty-state';
 import { ClayCard } from '@/components/clay-card';
 import { FilterBar } from '@/components/filter-bar';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Shadows } from '@/constants/theme';
 import { Dog, DogSize, EnergyLevel } from '@/types/database';
 
@@ -140,7 +141,7 @@ export default function HomeScreen() {
                     end={{ x: 1, y: 0 }}
                     style={[styles.activeWalkBanner, Shadows.clayMd[0]]}>
                     <View style={styles.bannerEmojiBlob}>
-                      <Text style={styles.bannerEmoji}>🏃</Text>
+                      <IconSymbol name="figure.walk" size={24} color="#FFFFFF" />
                     </View>
                     <View style={styles.bannerContent}>
                       <Text style={styles.bannerTitle}>
@@ -164,7 +165,7 @@ export default function HomeScreen() {
                   {/* Decorative blob */}
                   <View style={styles.streakBlob} />
                   <View style={[styles.streakEmojiBlob, { backgroundColor: surfacePrimary }]}>
-                    <Text style={styles.streakEmoji}>🔥</Text>
+                    <IconSymbol name="flame.fill" size={40} color={primary} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.streakCount, { color: primary }]}>
@@ -204,7 +205,7 @@ export default function HomeScreen() {
         ListEmptyComponent={
           !isLoading && myActiveDogs.length === 0 ? (
             <EmptyState
-              icon="🐕"
+              icon="pawprint.fill"
               title={t('dogs.noDogs')}
               message={t('dogs.noDogsMessage')}
               actionLabel={t('dogs.addDog')}
@@ -292,7 +293,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  streakEmoji: { fontSize: 36, lineHeight: 44 },
   streakCount: { fontSize: 36, fontWeight: '900', letterSpacing: -0.5 },
   streakLabel: { fontSize: 13, fontWeight: '600', marginTop: 2 },
   streakBonusPill: {
@@ -332,7 +332,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  bannerEmoji: { fontSize: 24, lineHeight: 30 },
   bannerContent: { flex: 1 },
   bannerTitle: { color: '#FFFFFF', fontSize: 16, fontWeight: '800' },
   bannerSubtitle: { color: '#FFFFFFCC', fontSize: 13, marginTop: 2 },

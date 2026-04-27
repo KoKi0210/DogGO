@@ -40,18 +40,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [session, fetchProfile]);
 
   useEffect(() => {
-    // Eagerly fetch the current session so isLoading always resolves.
-    // onAuthStateChange alone is not guaranteed to fire on cold start.
-    supabase.auth.getSession().then(async ({ data: { session: initial } }) => {
-      setSession(initial);
+    let cancelled = false;
 
-      if (initial?.user) {
-        await fetchProfile(initial.user.id);
+    async function initSession(retries = 3): Promise<void> {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const { data: { session: initial } } = await supabase.auth.getSession();
+          if (cancelled) return;
+
+          setSession(initial);
+          if (initial?.user) {
+            await fetchProfile(initial.user.id);
+          }
+          return;
+        } catch {
+          if (cancelled) return;
+          // Wait before retry (1s, 2s) to let Supabase cold-start
+          if (i < retries - 1) {
+            await new Promise((r) => setTimeout(r, (i + 1) * 1000));
+          }
+        }
       }
+    }
 
-      setIsLoading(false);
-    }).catch(() => {
-      setIsLoading(false);
+    initSession().finally(() => {
+      if (!cancelled) setIsLoading(false);
     });
 
     // Listen for future auth changes (login, logout, token refresh)
@@ -67,7 +80,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, [fetchProfile]);
 
   return (

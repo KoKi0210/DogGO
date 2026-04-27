@@ -15,6 +15,7 @@ import Animated, {
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Shadows, Radius } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { SPRING_IN } from '@/constants/animations';
 
 interface ButtonProps {
   title: string;
@@ -25,8 +26,7 @@ interface ButtonProps {
   style?: ViewStyle;
 }
 
-const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
-const SPRING_OUT = { damping: 10, stiffness: 200, mass: 0.8 };
+const BUTTON_SPRING_OUT = { damping: 10, stiffness: 200, mass: 0.8 };
 
 export function Button({
   title,
@@ -80,7 +80,7 @@ export function Button({
           scale.value = withSpring(0.94, SPRING_IN);
         }}
         onPressOut={() => {
-          scale.value = withSpring(1, SPRING_OUT);
+          scale.value = withSpring(1, BUTTON_SPRING_OUT);
         }}>
         {isOutline ? (
           <View

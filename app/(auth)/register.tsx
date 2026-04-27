@@ -59,8 +59,8 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await signUp(email.trim(), password, displayName.trim());
-    } catch (error: any) {
-      Alert.alert(t('common.error'), error.message);
+    } catch (error: unknown) {
+      Alert.alert(t('common.error'), error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }

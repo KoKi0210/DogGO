@@ -1,7 +1,7 @@
 import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useWalk } from '@/hooks/use-walk';
 import { useReviews } from '@/hooks/use-reviews';
@@ -12,12 +12,34 @@ import { WalkMap } from '@/components/walk-map';
 import { WalkStats } from '@/components/walk-stats';
 import { StarRating } from '@/components/star-rating';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Review } from '@/types/database';
+import { resolveImageUrl } from '@/lib/storage';
+
+function normalizeUri(value: string | null | undefined) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === 'null' || trimmed === 'undefined') return null;
+  return trimmed;
+}
+
+function safeDecodeUri(value: string) {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
 
 export default function WalkSummaryScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { walkId, selfieUri } = useLocalSearchParams<{ walkId: string; selfieUri?: string }>();
+  const { walkId, selfieUri, selfieUploadedUri, selfieLocalUri } = useLocalSearchParams<{
+    walkId: string;
+    selfieUri?: string;
+    selfieUploadedUri?: string;
+    selfieLocalUri?: string;
+  }>();
   const { user } = useAuth();
   const { walk, isLoading } = useWalk(walkId ?? '');
   const { createReview, getReviewForWalk, isSubmitting: isReviewSubmitting } = useReviews();
@@ -34,6 +56,23 @@ export default function WalkSummaryScreen() {
   const [comment, setComment] = useState('');
   const [existingReview, setExistingReview] = useState<Review | null>(null);
   const [reviewChecked, setReviewChecked] = useState(false);
+  const [selfieLoadFailed, setSelfieLoadFailed] = useState(false);
+  const [selfieSourceIndex, setSelfieSourceIndex] = useState(0);
+  const [resolvedSelfieCandidates, setResolvedSelfieCandidates] = useState<string[]>([]);
+
+  const legacySelfieUri = typeof selfieUri === 'string' ? safeDecodeUri(selfieUri) : null;
+  const uploadedSelfieUri = typeof selfieUploadedUri === 'string' ? safeDecodeUri(selfieUploadedUri) : null;
+  const localSelfieUri = typeof selfieLocalUri === 'string' ? safeDecodeUri(selfieLocalUri) : null;
+  const rawSelfieCandidates = useMemo(() => (
+    [
+      normalizeUri(walk?.selfie_url),
+      normalizeUri(uploadedSelfieUri),
+      normalizeUri(localSelfieUri),
+      normalizeUri(legacySelfieUri),
+    ].filter((value, index, array): value is string => !!value && array.indexOf(value) === index)
+  ), [walk?.selfie_url, uploadedSelfieUri, localSelfieUri, legacySelfieUri]);
+
+  const selfieCandidatesKey = rawSelfieCandidates.join('|');
 
   useEffect(() => {
     if (walkId) {
@@ -44,6 +83,35 @@ export default function WalkSummaryScreen() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [walkId]);
+
+  useEffect(() => {
+    setSelfieLoadFailed(false);
+    setSelfieSourceIndex(0);
+  }, [selfieCandidatesKey, rawSelfieCandidates]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function resolveCandidates() {
+      if (rawSelfieCandidates.length === 0) {
+        setResolvedSelfieCandidates([]);
+        return;
+      }
+
+      const resolved = await Promise.all(rawSelfieCandidates.map((uri) => resolveImageUrl(uri)));
+      const unique = resolved.filter((value, index, array): value is string => !!value && array.indexOf(value) === index);
+
+      if (!cancelled) {
+        setResolvedSelfieCandidates(unique);
+      }
+    }
+
+    resolveCandidates();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selfieCandidatesKey, rawSelfieCandidates]);
 
   if (isLoading) return <Loading fullScreen />;
 
@@ -63,10 +131,17 @@ export default function WalkSummaryScreen() {
     : Math.max(0, Math.round(durationMins * 60));
   const pointsEarned = walk.points_earned ?? 0;
   const dog = walk.dog;
-  const fallbackSelfieUri = typeof selfieUri === 'string' ? decodeURIComponent(selfieUri) : null;
-  const selfieToShow = walk.selfie_url ?? fallbackSelfieUri;
+  const selfieToShow = resolvedSelfieCandidates[selfieSourceIndex] ?? null;
   const isOwner = user?.id === walk.owner?.id;
   const canReview = isOwner && reviewChecked && !existingReview;
+
+  function handleSelfieLoadError() {
+    if (selfieSourceIndex < resolvedSelfieCandidates.length - 1) {
+      setSelfieSourceIndex((prev) => prev + 1);
+      return;
+    }
+    setSelfieLoadFailed(true);
+  }
 
   async function handleSubmitReview() {
     if (!walk || !walkId || rating === 0) {
@@ -93,7 +168,7 @@ export default function WalkSummaryScreen() {
       <Stack.Screen options={{ title: t('walks.walkSummary'), headerBackVisible: true }} />
       <ScrollView style={[styles.container, { backgroundColor: background }]} contentContainerStyle={styles.scrollContent}>
         <Text style={[styles.heading, { color: text }]}>
-          {t('walks.greatWalk')} 🎉
+          {t('walks.greatWalk')}
         </Text>
 
         {/* Route Map */}
@@ -142,7 +217,7 @@ export default function WalkSummaryScreen() {
                 <Image source={{ uri: dog.photo_url }} style={styles.dogPhoto} />
               ) : (
                 <View style={[styles.dogPhoto, styles.dogPhotoPlaceholder, { backgroundColor: placeholder }]}>
-                  <Text style={styles.dogEmoji}>🐕</Text>
+                  <IconSymbol name="pawprint.fill" size={28} color={primary} />
                 </View>
               )}
               <View style={styles.dogInfo}>
@@ -154,10 +229,20 @@ export default function WalkSummaryScreen() {
         )}
 
         {/* Selfie */}
-        {selfieToShow && (
+        {resolvedSelfieCandidates.length > 0 && (
           <View style={styles.selfieSection}>
-            <Text style={[styles.selfieLabel, { color: textSecondary }]}>📸</Text>
-            <Image source={{ uri: selfieToShow }} style={styles.selfieImage} />
+            {!selfieLoadFailed && selfieToShow ? (
+              <Image
+                source={{ uri: selfieToShow }}
+                style={styles.selfieImage}
+                onError={handleSelfieLoadError}
+              />
+            ) : (
+              <View style={[styles.selfieFallback, { backgroundColor: placeholder }]}>
+                <IconSymbol name="camera.fill" size={24} color={textSecondary} />
+                <Text style={[styles.selfieFallbackText, { color: textSecondary }]}>Selfie unavailable</Text>
+              </View>
+            )}
           </View>
         )}
 
@@ -223,13 +308,20 @@ const styles = StyleSheet.create({
   dogRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   dogPhoto: { width: 56, height: 56, borderRadius: 16 },
   dogPhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  dogEmoji: { fontSize: 24 },
   dogInfo: {},
   dogName: { fontSize: 16, fontWeight: '700' },
   dogBreed: { fontSize: 13, marginTop: 2 },
-  selfieSection: { alignItems: 'center', gap: 8 },
-  selfieLabel: { fontSize: 20 },
+  selfieSection: { width: '100%', alignSelf: 'stretch' },
   selfieImage: { width: '100%', height: 200, borderRadius: 20 },
+  selfieFallback: {
+    width: '100%',
+    height: 200,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  selfieFallbackText: { fontSize: 13, fontWeight: '600' },
   reviewCard: { gap: 12 },
   reviewTitle: { fontSize: 16, fontWeight: '700' },
   ratingRow: { alignItems: 'center' },

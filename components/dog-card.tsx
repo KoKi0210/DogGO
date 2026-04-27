@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, {
@@ -10,6 +11,8 @@ import { Dog, DogStatus } from '@/types/database';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { formatDistance } from '@/lib/location';
 import { ClayCard } from '@/components/clay-card';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { SPRING_IN, SPRING_OUT } from '@/constants/animations';
 
 interface DogCardProps {
   dog: Dog;
@@ -32,10 +35,7 @@ const BADGE_COLOR_KEY: Record<DogStatus, 'accent' | 'primary' | 'secondary' | 't
   adopted: 'textSecondary',
 };
 
-const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
-const SPRING_OUT = { damping: 12, stiffness: 200, mass: 0.8 };
-
-export function DogCard({ dog, distance, showStatusBadge, onPress }: DogCardProps) {
+function DogCardBase({ dog, distance, showStatusBadge, onPress }: DogCardProps) {
   const { t } = useTranslation();
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
@@ -45,6 +45,7 @@ export function DogCard({ dog, distance, showStatusBadge, onPress }: DogCardProp
   const surfacePrimaryEnd = useThemeColor({}, 'surfacePrimaryEnd');
   const surfaceAccent = useThemeColor({}, 'surfaceAccent');
   const accent = useThemeColor({}, 'accent');
+  const textOnPrimary = useThemeColor({}, 'textOnPrimary');
 
   const scale = useSharedValue(1);
   const animatedStyle = useAnimatedStyle(() => ({
@@ -67,7 +68,7 @@ export function DogCard({ dog, distance, showStatusBadge, onPress }: DogCardProp
             <LinearGradient
               colors={[surfacePrimary, surfacePrimaryEnd]}
               style={[styles.photoContainer, styles.photoPlaceholder]}>
-              <Text style={styles.photoEmoji}>🐕</Text>
+              <IconSymbol name="pawprint.fill" size={40} color={primary} />
             </LinearGradient>
           )}
 
@@ -76,7 +77,7 @@ export function DogCard({ dog, distance, showStatusBadge, onPress }: DogCardProp
               <Text style={[styles.name, { color: text }]} numberOfLines={1}>{dog.name}</Text>
               {showStatusBadge && (
                 <View style={[styles.badge, { backgroundColor: badgeColor }]}>
-                  <Text style={styles.badgeText}>{t(STATUS_KEY[dog.status])}</Text>
+                  <Text style={[styles.badgeText, { color: textOnPrimary }]}>{t(STATUS_KEY[dog.status])}</Text>
                 </View>
               )}
             </View>
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   photo: { width: 110, height: 110, resizeMode: 'cover' },
   photoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  photoEmoji: { fontSize: 40, lineHeight: 48 },
+
   info: { flex: 1, padding: 12, justifyContent: 'space-between' },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   name: { fontSize: 18, fontWeight: '800', flexShrink: 1, letterSpacing: -0.3 },
@@ -119,5 +120,7 @@ const styles = StyleSheet.create({
   tag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   tagText: { fontSize: 12, fontWeight: '600' },
   badge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  badgeText: { color: '#FFFFFF', fontSize: 11, fontWeight: '700' },
+  badgeText: { fontSize: 11, fontWeight: '700' },
 });
+
+export const DogCard = memo(DogCardBase);

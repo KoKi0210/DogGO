@@ -121,13 +121,13 @@ export default function ProfileScreen() {
       {/* Section rows */}
       <View style={styles.sections}>
         <ProfileSectionRow
-          emoji="🐕"
+          emoji="pawprint.fill"
           title={t('profile.myDogs')}
           count={dogs.length}
           onPress={() => router.push('/profile/dogs')}
         />
         <ProfileSectionRow
-          emoji="🚶"
+          emoji="figure.walk"
           title={t('profile.myWalks')}
           count={walks.length}
           subtitle={activeWalkCount > 0 ? t('profile.activeCount', { count: activeWalkCount }) : undefined}
@@ -135,7 +135,7 @@ export default function ProfileScreen() {
         />
         {pendingWalks.length > 0 && (
           <ProfileSectionRow
-            emoji="📬"
+            emoji="bell.fill"
             title={t('profile.pendingRequests')}
             count={pendingWalks.length}
             showBadge
@@ -144,7 +144,7 @@ export default function ProfileScreen() {
         )}
         {totalAdoptions > 0 && (
           <ProfileSectionRow
-            emoji="❤️"
+            emoji="heart.fill"
             title={t('profile.adoptionRequests')}
             count={totalAdoptions}
             onPress={() => router.push('/profile/adoptions')}

@@ -73,7 +73,7 @@ export default function NotificationsScreen() {
           ListEmptyComponent={
             !isLoading ? (
               <EmptyState
-                icon="🔔"
+                icon="bell.fill"
                 title={t('notifications.noNotifications')}
                 message={t('notifications.noNotificationsMessage')}
               />

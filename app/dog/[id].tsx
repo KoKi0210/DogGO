@@ -12,6 +12,7 @@ import { Button } from '@/components/button';
 import { Card } from '@/components/card';
 import { Loading } from '@/components/loading';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Dog, Profile } from '@/types/database';
 
 export default function DogDetailScreen() {
@@ -128,7 +129,7 @@ export default function DogDetailScreen() {
           <Image source={{ uri: dog.photo_url }} style={styles.heroPhoto} />
         ) : (
           <View style={[styles.heroPhoto, styles.heroPlaceholder, { backgroundColor: primary + '20' }]}>
-            <Text style={styles.heroEmoji}>🐕</Text>
+            <IconSymbol name="pawprint.fill" size={40} color={primary} />
           </View>
         )}
 
@@ -233,7 +234,6 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   heroPhoto: { width: '100%', height: 300 },
   heroPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  heroEmoji: { fontSize: 64 },
   content: { padding: 24 },
   name: { fontSize: 32, fontWeight: '900', marginBottom: 16, letterSpacing: -0.5 },
   infoGrid: { flexDirection: 'row', gap: 12, marginBottom: 16 },
