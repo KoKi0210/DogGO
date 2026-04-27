@@ -99,7 +99,7 @@ export default function MyWalksScreen() {
           ListEmptyComponent={
             !isLoading ? (
               <EmptyState
-                icon="🚶"
+                icon="figure.walk"
                 title={t('walks.noWalks')}
                 message={t('walks.noWalksMessage')}
               />

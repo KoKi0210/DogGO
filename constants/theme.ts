@@ -129,6 +129,7 @@ export const Shadows: Record<'claySm' | 'clayMd' | 'clayLg', ShadowLayer[]> = {
   ],
 };
 
+// TODO REMOVE THIS
 export const Fonts = Platform.select({
   ios: {
     sans: 'system-ui',

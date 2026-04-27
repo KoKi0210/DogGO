@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Notification, NotificationType } from '@/types/database';
 import { ClayCard } from '@/components/clay-card';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -17,13 +18,13 @@ interface NotificationItemProps {
 }
 
 const TYPE_ICONS: Record<NotificationType, string> = {
-  walk_requested: '🚶',
-  walk_approved: '✅',
-  walk_started: '🏃',
-  walk_completed: '🎉',
-  adoption_request: '❤️',
-  adoption_approved: '🏠',
-  leaderboard_change: '🏆',
+  walk_requested: 'figure.walk',
+  walk_approved: 'checkmark.circle.fill',
+  walk_started: 'figure.run',
+  walk_completed: 'party.popper',
+  adoption_request: 'heart.fill',
+  adoption_approved: 'house.fill',
+  leaderboard_change: 'trophy.fill',
 };
 
 const APPROVED_TYPES: NotificationType[] = ['walk_approved', 'walk_completed', 'adoption_approved'];
@@ -35,7 +36,7 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
   const surfaceAccent = useThemeColor({}, 'surfaceAccent');
 
-  const icon = TYPE_ICONS[notification.type] ?? '🔔';
+  const icon = TYPE_ICONS[notification.type] ?? 'bell.fill';
   const isUnread = !notification.read;
   const isApproved = APPROVED_TYPES.includes(notification.type);
   const timeAgo = formatTimeAgo(notification.created_at);
@@ -72,7 +73,7 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
             styles.iconBlob,
             { backgroundColor: isApproved ? surfaceAccent : surfacePrimary },
           ]}>
-          <Text style={styles.icon}>{icon}</Text>
+          <IconSymbol name={icon as any} size={22} color={primary} />
         </View>
 
         <View style={styles.content}>
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  icon: { fontSize: 22, lineHeight: 28 },
+
   content: { flex: 1, gap: 2 },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   title: { fontSize: 15, fontWeight: '700', flex: 1 },

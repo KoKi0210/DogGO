@@ -53,7 +53,8 @@ export function calculateDistance(
       Math.sin(dLon / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(EARTH_RADIUS_KM * c * 10) / 10;
+  // Keep full precision for segment accumulation; round only for display/persistence.
+  return EARTH_RADIUS_KM * c;
 }
 
 function toRad(degrees: number): number {
@@ -82,11 +83,12 @@ export function formatDuration(minutes: number): string {
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
+// TODO REMOVE THIS
 /**
  * Calculate total distance from a series of coordinates.
  */
 export function calculateRouteDistance(
-  coords: Array<{ lat: number; lng: number }>
+  coords: { lat: number; lng: number }[]
 ): number {
   let total = 0;
   for (let i = 1; i < coords.length; i++) {

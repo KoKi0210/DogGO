@@ -30,7 +30,10 @@ export function WalkStats({
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
   const surfaceAccent = useThemeColor({}, 'surfaceAccent');
 
-  const speed = avgSpeed ?? (durationMins > 0 ? (distanceKm / (durationMins / 60)) : 0);
+  const safeDistanceKm = Number.isFinite(distanceKm) ? distanceKm : 0;
+  const safeDurationMins = Number.isFinite(durationMins) ? durationMins : 0;
+  const computedSpeed = safeDurationMins > 0 ? (safeDistanceKm / (safeDurationMins / 60)) : 0;
+  const speed = typeof avgSpeed === 'number' && Number.isFinite(avgSpeed) ? avgSpeed : computedSpeed;
 
   function formatLiveDuration(totalSeconds: number) {
     const hours = Math.floor(totalSeconds / 3600);
@@ -39,36 +42,59 @@ export function WalkStats({
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 
-  function formatLiveDistance(kmValue: number) {
-    const wholeKm = Math.floor(kmValue);
-    const mm = Math.floor((kmValue - wholeKm) * 100);
-    return `${wholeKm}:${String(mm).padStart(2, '0')}`;
-  }
-
   const shouldUseLiveFormat = liveFormat && durationSeconds != null;
   const shouldUseClockDuration = durationAsClock || shouldUseLiveFormat;
-  const durationValueSeconds = durationSeconds ?? Math.max(0, Math.round(durationMins * 60));
-  const distanceText = shouldUseLiveFormat ? formatLiveDistance(distanceKm) : distanceKm.toFixed(2);
+  const durationValueSeconds = durationSeconds ?? Math.max(0, Math.round(safeDurationMins * 60));
+  const distanceText = safeDistanceKm.toFixed(2);
   const durationText = shouldUseClockDuration
     ? formatLiveDuration(durationValueSeconds)
-    : String(Math.round(durationMins));
-  const distanceLabel = shouldUseLiveFormat ? 'KM:MM' : t('walks.km');
+    : String(Math.round(safeDurationMins));
+  const distanceLabel = t('walks.km');
   const durationLabel = shouldUseClockDuration ? 'HH:MM:SS' : t('walks.min');
+  const useLiveTiles = shouldUseLiveFormat;
+
+  const distanceTileStyle = [styles.tile, { backgroundColor: surfacePrimary }];
+  const durationTileStyle = [styles.tile, { backgroundColor: text + '08', borderColor: text + '20' }];
+  const speedTileStyle = [styles.tile, { backgroundColor: surfaceAccent }];
 
   return (
     <View style={styles.container}>
-      <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfacePrimary }]}>
-        <Text style={[styles.value, { color: primary }]}>{distanceText}</Text>
-        <Text style={[styles.label, { color: textSecondary }]}>{distanceLabel}</Text>
-      </Card>
-      <Card shadowLevel="sm" style={styles.card}>
-        <Text style={[styles.value, { color: text }]}>{durationText}</Text>
-        <Text style={[styles.label, { color: textSecondary }]}>{durationLabel}</Text>
-      </Card>
-      <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfaceAccent }]}>
-        <Text style={[styles.value, { color: accent }]}>{speed.toFixed(1)}</Text>
-        <Text style={[styles.label, { color: textSecondary }]}>{t('walks.kmh')}</Text>
-      </Card>
+      {useLiveTiles ? (
+        <View style={distanceTileStyle}>
+          <Text style={[styles.value, { color: primary }]}>{distanceText}</Text>
+          <Text style={[styles.label, { color: textSecondary }]}>{distanceLabel}</Text>
+        </View>
+      ) : (
+        <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfacePrimary }]}>
+          <Text style={[styles.value, { color: primary }]}>{distanceText}</Text>
+          <Text style={[styles.label, { color: textSecondary }]}>{distanceLabel}</Text>
+        </Card>
+      )}
+
+      {useLiveTiles ? (
+        <View style={durationTileStyle}>
+          <Text style={[styles.value, { color: text }]}>{durationText}</Text>
+          <Text style={[styles.label, { color: textSecondary }]}>{durationLabel}</Text>
+        </View>
+      ) : (
+        <Card shadowLevel="sm" style={styles.card}>
+          <Text style={[styles.value, { color: text }]}>{durationText}</Text>
+          <Text style={[styles.label, { color: textSecondary }]}>{durationLabel}</Text>
+        </Card>
+      )}
+
+      {useLiveTiles ? (
+        <View style={speedTileStyle}>
+          <Text style={[styles.value, { color: accent }]}>{speed.toFixed(1)}</Text>
+          <Text style={[styles.label, { color: textSecondary }]}>{t('walks.kmh')}</Text>
+        </View>
+      ) : (
+        <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfaceAccent }]}>
+          <Text style={[styles.value, { color: accent }]}>{speed.toFixed(1)}</Text>
+          <Text style={[styles.label, { color: textSecondary }]}>{t('walks.kmh')}</Text>
+        </Card>
+      )}
+
       {pointsEarned != null && (
         <Card shadowLevel="sm" style={[styles.card, { backgroundColor: surfacePrimary }]}>
           <Text style={[styles.value, { color: primary }]}>{pointsEarned}</Text>
@@ -90,9 +116,21 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 10,
   },
+  tile: {
+    flex: 1,
+    minHeight: 74,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+  },
   value: {
     fontSize: 24,
     fontWeight: '800',
+    includeFontPadding: false,
   },
   label: {
     fontSize: 12,

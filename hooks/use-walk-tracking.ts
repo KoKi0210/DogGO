@@ -70,12 +70,12 @@ export function useWalkTracking() {
     // Update duration every second
     timerRef.current = setInterval(updateDuration, 1000);
 
-    // Watch position every ~5 seconds
+    // Watch position frequently for smoother live stats updates.
     watchRef.current = await Location.watchPositionAsync(
       {
-        accuracy: Location.Accuracy.High,
-        timeInterval: 5000,
-        distanceInterval: 5,
+        accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 100,
+        distanceInterval: 1,
       },
       (location) => {
         const point: RoutePoint = {
@@ -91,13 +91,13 @@ export function useWalkTracking() {
           distanceRef.current += segmentDist;
         }
 
-        routeRef.current = [...prev, point];
+        routeRef.current.push(point);
 
         const speed = location.coords.speed;
 
         setState((s) => ({
           ...s,
-          route: routeRef.current,
+          route: [...routeRef.current],
           distanceKm: Math.round(distanceRef.current * 100) / 100,
           currentSpeed: speed != null && speed >= 0 ? Math.round(speed * 3.6 * 10) / 10 : 0,
         }));

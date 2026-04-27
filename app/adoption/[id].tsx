@@ -10,6 +10,7 @@ import { Button } from '@/components/button';
 import { Card } from '@/components/card';
 import { Loading } from '@/components/loading';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { AdoptionRequest, Dog, Profile, AdoptionStatus } from '@/types/database';
 
 interface AdoptionWithDetails extends AdoptionRequest {
@@ -37,6 +38,7 @@ export default function AdoptionDetailScreen() {
   const background = useThemeColor({}, 'background');
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
+  const primary = useThemeColor({}, 'primary');
   const accent = useThemeColor({}, 'accent');
   const placeholder = useThemeColor({}, 'placeholder');
 
@@ -155,7 +157,7 @@ export default function AdoptionDetailScreen() {
                 <Image source={{ uri: dog.photo_url }} style={styles.dogPhoto} />
               ) : (
                 <View style={[styles.dogPhoto, styles.dogPhotoPlaceholder, { backgroundColor: placeholder }]}>
-                  <Text style={styles.dogEmoji}>🐕</Text>
+                  <IconSymbol name="pawprint.fill" size={32} color={primary} />
                 </View>
               )}
               <View style={styles.dogInfo}>
@@ -214,7 +216,7 @@ export default function AdoptionDetailScreen() {
         {/* Success card for approved */}
         {request.status === 'approved' && (
           <Card style={{ ...styles.successCard, backgroundColor: accent + '15' }}>
-            <Text style={[styles.successEmoji]}>🎉</Text>
+            <IconSymbol name="party.popper" size={40} color={primary} />
             <Text style={[styles.successText, { color: accent }]}>{t('adoption.successMessage')}</Text>
           </Card>
         )}
@@ -241,7 +243,6 @@ const styles = StyleSheet.create({
   dogRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   dogPhoto: { width: 64, height: 64, borderRadius: 12 },
   dogPhotoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  dogEmoji: { fontSize: 28 },
   dogInfo: {},
   dogName: { fontSize: 18, fontWeight: '600' },
   dogBreed: { fontSize: 14, marginTop: 2 },
@@ -252,6 +253,5 @@ const styles = StyleSheet.create({
   personRole: { fontSize: 13, textTransform: 'capitalize' },
   actions: { gap: 12 },
   successCard: { borderRadius: 12, padding: 24, alignItems: 'center', gap: 8 },
-  successEmoji: { fontSize: 40 },
   successText: { fontSize: 16, fontWeight: '600', textAlign: 'center' },
 });

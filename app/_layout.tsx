@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from '@/contexts/auth-context';
 
 SplashScreen.preventAutoHideAsync();
 
+// TODO REMOVE THIS
 export const unstable_settings = {
   anchor: '(tabs)',
 };
@@ -58,6 +59,7 @@ function RootLayoutNav() {
   );
 }
 
+// TODO REMOVE THIS
 export default function RootLayout() {
   return (
     <AuthProvider>

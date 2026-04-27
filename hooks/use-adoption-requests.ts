@@ -32,15 +32,28 @@ export function useAdoptionRequests() {
         .eq('adopter_id', user.id)
         .order('created_at', { ascending: false });
 
+      // Get IDs of dogs owned by this user
+      const { data: myDogs } = await supabase
+        .from('dogs')
+        .select('id')
+        .eq('owner_id', user.id);
+
+      const myDogIds = (myDogs ?? []).map((d: { id: string }) => d.id);
+
       // Received (dogs I own)
-      const { data: receivedData } = await supabase
-        .from('adoption_requests')
-        .select('*, dog:dogs(*), adopter:profiles(*)')
-        .order('created_at', { ascending: false });
+      let receivedItems: AdoptionRequestWithDetails[] = [];
+      if (myDogIds.length > 0) {
+        const { data: receivedData } = await supabase
+          .from('adoption_requests')
+          .select('*, dog:dogs(*), adopter:profiles(*)')
+          .in('dog_id', myDogIds)
+          .neq('adopter_id', user.id)
+          .order('created_at', { ascending: false });
+
+        receivedItems = (receivedData ?? []) as unknown as AdoptionRequestWithDetails[];
+      }
 
       const sentItems = (sentData ?? []) as unknown as AdoptionRequestWithDetails[];
-      const receivedItems = ((receivedData ?? []) as unknown as AdoptionRequestWithDetails[])
-        .filter((r) => r.dog && r.dog.owner_id === user.id && r.adopter_id !== user.id);
 
       setSent(sentItems);
       setReceived(receivedItems);

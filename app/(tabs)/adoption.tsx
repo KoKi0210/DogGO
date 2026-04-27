@@ -8,6 +8,7 @@ import { DogCard } from '@/components/dog-card';
 import { EmptyState } from '@/components/empty-state';
 import { FilterBar } from '@/components/filter-bar';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { DogSize, EnergyLevel } from '@/types/database';
 
 export default function AdoptionScreen() {
@@ -71,7 +72,7 @@ export default function AdoptionScreen() {
             {/* Decorative hero blob */}
             <View style={styles.heroArea}>
               <View style={[styles.heroBlob, { backgroundColor: surfacePrimary }]}>
-                <Text style={styles.heroEmoji}>❤️</Text>
+                <IconSymbol name="heart.fill" size={40} color={primary} />
               </View>
             </View>
 
@@ -96,7 +97,7 @@ export default function AdoptionScreen() {
         ListEmptyComponent={
           !isLoading ? (
             <EmptyState
-              icon="❤️"
+              icon="heart.fill"
               title={t('adoption.noAdoptions')}
               message={t('adoption.noAdoptionsMessage')}
             />
@@ -125,7 +126,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  heroEmoji: { fontSize: 44, lineHeight: 52 },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',

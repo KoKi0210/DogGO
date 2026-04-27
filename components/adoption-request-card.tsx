@@ -10,6 +10,8 @@ import { AdoptionRequestWithDetails } from '@/hooks/use-adoption-requests';
 import { AdoptionStatus } from '@/types/database';
 import { Avatar } from '@/components/avatar';
 import { ClayCard } from '@/components/clay-card';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { SPRING_IN, SPRING_OUT } from '@/constants/animations';
 
 interface AdoptionRequestCardProps {
   request: AdoptionRequestWithDetails;
@@ -23,14 +25,13 @@ const STATUS_COLORS: Record<AdoptionStatus, string> = {
   rejected: '#F44336',
 };
 
-const SPRING_IN = { damping: 15, stiffness: 400, mass: 0.6 };
-const SPRING_OUT = { damping: 12, stiffness: 200, mass: 0.8 };
-
 export function AdoptionRequestCard({ request, variant, onPress }: AdoptionRequestCardProps) {
   const { t } = useTranslation();
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
+  const primary = useThemeColor({}, 'primary');
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const textOnPrimary = useThemeColor({}, 'textOnPrimary');
 
   const dog = request.dog;
   const adopter = request.adopter;
@@ -55,7 +56,7 @@ export function AdoptionRequestCard({ request, variant, onPress }: AdoptionReque
             </View>
           ) : (
             <View style={[styles.photoContainer, styles.photoPlaceholder, { backgroundColor: surfacePrimary }]}>
-              <Text style={styles.photoEmoji}>🐕</Text>
+              <IconSymbol name="pawprint.fill" size={32} color={primary} />
             </View>
           )}
 
@@ -74,7 +75,7 @@ export function AdoptionRequestCard({ request, variant, onPress }: AdoptionReque
             )}
 
             <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
-              <Text style={styles.statusText}>
+              <Text style={[styles.statusText, { color: textOnPrimary }]}>
                 {t(`adoption.status${request.status.charAt(0).toUpperCase() + request.status.slice(1)}`)}
               </Text>
             </View>
@@ -97,11 +98,11 @@ const styles = StyleSheet.create({
   },
   photo: { width: 88, height: 88, resizeMode: 'cover' },
   photoPlaceholder: { alignItems: 'center', justifyContent: 'center' },
-  photoEmoji: { fontSize: 32 },
+
   info: { flex: 1, padding: 12, justifyContent: 'center', gap: 6 },
   dogName: { fontSize: 16, fontWeight: '700' },
   adopterRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   adopterName: { fontSize: 13 },
   statusBadge: { alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
-  statusText: { color: '#FFFFFF', fontSize: 11, fontWeight: '700' },
+  statusText: { fontSize: 11, fontWeight: '700' },
 });

@@ -16,13 +16,14 @@ export function ProfileSectionRow({ emoji, title, count, subtitle, onPress, show
   const text = useThemeColor({}, 'text');
   const textSecondary = useThemeColor({}, 'textSecondary');
   const error = useThemeColor({}, 'error');
+  const primary = useThemeColor({}, 'primary');
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
 
   return (
     <Card onPress={onPress} style={styles.card}>
       <View style={styles.row}>
         <View style={[styles.emojiBlob, { backgroundColor: surfacePrimary }]}>
-          <Text style={styles.emoji}>{emoji}</Text>
+          <IconSymbol name={emoji as any} size={22} color={primary} />
         </View>
         <View style={styles.content}>
           <View style={styles.titleRow}>
@@ -53,7 +54,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emoji: { fontSize: 22, lineHeight: 28 },
   content: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   title: { fontSize: 16, fontWeight: '700' },

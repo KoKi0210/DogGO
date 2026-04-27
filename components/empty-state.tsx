@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { Button } from '@/components/button';
+import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Shadows } from '@/constants/theme';
 
 interface EmptyStateProps {
@@ -15,12 +16,13 @@ export function EmptyState({ icon, title, message, actionLabel, onAction }: Empt
   const textSecondary = useThemeColor({}, 'textSecondary');
   const text = useThemeColor({}, 'text');
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
+  const primary = useThemeColor({}, 'primary');
 
   return (
     <View style={styles.container}>
       {icon && (
         <View style={[styles.iconBlob, { backgroundColor: surfacePrimary }, Shadows.claySm[0]]}>
-          <Text style={styles.icon}>{icon}</Text>
+          <IconSymbol name={icon as any} size={40} color={primary} />
         </View>
       )}
       <Text style={[styles.title, { color: text }]}>{title}</Text>
@@ -48,10 +50,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
-  },
-  icon: {
-    fontSize: 40,
-    lineHeight: 48,
   },
   title: {
     fontSize: 22,
