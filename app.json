@@ -40,8 +40,20 @@
         }
       ],
       "expo-localization",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#FF6B35"
+        }
+      ]
     ],
+    "extra": {
+      "eas": {
+        "projectId": "ec5847d0-b57f-422c-91b9-cd3bd9061fff"
+      }
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

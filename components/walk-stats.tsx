@@ -39,7 +39,10 @@ export function WalkStats({
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    if (hours > 0) {
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   }
 
   const shouldUseLiveFormat = liveFormat && durationSeconds != null;
@@ -50,7 +53,7 @@ export function WalkStats({
     ? formatLiveDuration(durationValueSeconds)
     : String(Math.round(safeDurationMins));
   const distanceLabel = t('walks.km');
-  const durationLabel = shouldUseClockDuration ? 'HH:MM:SS' : t('walks.min');
+  const durationLabel = shouldUseClockDuration ? t('walks.time') : t('walks.min');
   const useLiveTiles = shouldUseLiveFormat;
 
   const distanceTileStyle = [styles.tile, { backgroundColor: surfacePrimary }];

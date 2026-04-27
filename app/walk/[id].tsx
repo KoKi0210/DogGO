@@ -22,7 +22,7 @@ export default function WalkDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { user } = useAuth();
   const { walk, isLoading, error, refresh } = useWalk(id);
-  const { approveWalk, rejectWalk, startWalk, endWalk, cancelWalk, isSubmitting } = useWalkMutations();
+  const { approveWalk, rejectWalk, startWalk, endWalk, cancelWalk, deleteWalk, isSubmitting } = useWalkMutations();
   const tracking = useWalkTracking();
 
   const background = useThemeColor({}, 'background');
@@ -182,6 +182,26 @@ export default function WalkDetailScreen() {
     ]);
   }, [id, cancelWalk, router, t]);
 
+  const handleDelete = useCallback(async () => {
+    if (!id) return;
+    Alert.alert(t('walks.deleteWalk'), t('walks.confirmDelete'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteWalk(id);
+            router.back();
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unknown error';
+            Alert.alert(t('common.error'), msg);
+          }
+        },
+      },
+    ]);
+  }, [id, deleteWalk, router, t]);
+
   if (isLoading) return <Loading fullScreen />;
 
   if (error || !walk) {
@@ -327,6 +347,15 @@ export default function WalkDetailScreen() {
                 {t('walks.walkCancelled')}
               </Text>
             </Card>
+          )}
+
+          {(isWalker || isOwner) && (
+            <Button
+              title={t('walks.deleteWalk')}
+              onPress={handleDelete}
+              loading={isSubmitting}
+              variant="danger"
+            />
           )}
         </View>
       </ScrollView>

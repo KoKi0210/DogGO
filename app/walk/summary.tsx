@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useWalk } from '@/hooks/use-walk';
+import { useWalkMutations } from '@/hooks/use-walk-mutations';
 import { useReviews } from '@/hooks/use-reviews';
 import { Button } from '@/components/button';
 import { Card } from '@/components/card';
@@ -42,6 +43,7 @@ export default function WalkSummaryScreen() {
   }>();
   const { user } = useAuth();
   const { walk, isLoading } = useWalk(walkId ?? '');
+  const { deleteWalk, isSubmitting: isDeleteSubmitting } = useWalkMutations();
   const { createReview, getReviewForWalk, isSubmitting: isReviewSubmitting } = useReviews();
 
   const background = useThemeColor({}, 'background');
@@ -133,6 +135,7 @@ export default function WalkSummaryScreen() {
   const dog = walk.dog;
   const selfieToShow = resolvedSelfieCandidates[selfieSourceIndex] ?? null;
   const isOwner = user?.id === walk.owner?.id;
+  const isWalker = user?.id === walk.walker_id;
   const canReview = isOwner && reviewChecked && !existingReview;
 
   function handleSelfieLoadError() {
@@ -161,6 +164,26 @@ export default function WalkSummaryScreen() {
       const message = error instanceof Error ? error.message : 'Unknown error';
       Alert.alert(t('common.error'), message);
     }
+  }
+
+  function handleDelete() {
+    if (!walkId) return;
+    Alert.alert(t('walks.deleteWalk'), t('walks.confirmDelete'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deleteWalk(walkId);
+            router.back();
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Unknown error';
+            Alert.alert(t('common.error'), msg);
+          }
+        },
+      },
+    ]);
   }
 
   return (
@@ -279,6 +302,15 @@ export default function WalkSummaryScreen() {
               <Text style={[styles.reviewComment, { color: text }]}>{existingReview.comment}</Text>
             )}
           </Card>
+        )}
+
+        {(isWalker || isOwner) && (
+          <Button
+            title={t('walks.deleteWalk')}
+            onPress={handleDelete}
+            loading={isDeleteSubmitting}
+            variant="danger"
+          />
         )}
 
         <Button

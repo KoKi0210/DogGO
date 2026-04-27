@@ -67,7 +67,11 @@
     "english": "English",
     "bulgarian": "Bulgarian",
     "about": "About",
-    "version": "Version"
+    "version": "Version",
+    "theme": "Theme",
+    "themeSystem": "System Default",
+    "themeLight": "Light",
+    "themeDark": "Dark"
   },
   "dogs": {
     "addDog": "Add Dog",
@@ -164,6 +168,9 @@
     "km": "km",
     "min": "min",
     "kmh": "km/h",
+    "time": "time",
+    "deleteWalk": "Delete Walk",
+    "confirmDelete": "Are you sure you want to delete this walk? This cannot be undone.",
     "errors": {
       "selfWalk": "You cannot request a walk with your own dog."
     }

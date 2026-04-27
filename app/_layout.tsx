@@ -8,6 +8,8 @@ import '@/i18n/config';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/contexts/auth-context';
+import { ThemePreferenceProvider } from '@/contexts/theme-context';
+import { usePushNotifications } from '@/hooks/use-push-notifications';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,10 +24,12 @@ function RootLayoutNav() {
   const segments = useSegments();
   const router = useRouter();
 
+  usePushNotifications();
+
   useEffect(() => {
     if (isLoading) return;
 
-    SplashScreen.hideAsync();
+    SplashScreen.hideAsync().catch(() => {});
 
     const inAuthGroup = segments[0] === '(auth)';
 
@@ -54,7 +58,7 @@ function RootLayoutNav() {
         <Stack.Screen name="profile/adoptions" options={{ title: 'Adoptions' }} />
         <Stack.Screen name="notifications" options={{ title: 'Notifications' }} />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
     </ThemeProvider>
   );
 }
@@ -62,8 +66,10 @@ function RootLayoutNav() {
 // TODO REMOVE THIS
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+    <ThemePreferenceProvider>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
+    </ThemePreferenceProvider>
   );
 }
