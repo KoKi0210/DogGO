@@ -1,50 +1,26 @@
--- ============================================================
--- DogGO Test Seed Data
--- ============================================================
---
--- INSTRUCTIONS:
--- 1. Create two accounts in the app (register via the Auth screen).
--- 2. Go to Supabase Dashboard → Authentication → Users, copy
---    the UUIDs for both accounts.
--- 3. Replace the two placeholders below with the real UUIDs.
--- 4. Run this entire script in Supabase SQL Editor.
--- ============================================================
-
--- *** PASTE YOUR UUIDs HERE ***
 DO $$
 DECLARE
-  user_a UUID := '6a415ddb-1293-4ed3-ad4d-1677bdeb3090'; -- Replace with User A UUID
-  user_b UUID := '5c7380ea-baf9-463c-85bd-f2e7610140f4'; -- Replace with User B UUID
-
-  -- Dog IDs (deterministic for FK references)
+  user_a UUID := '6a415ddb-1293-4ed3-ad4d-1677bdeb3090';
+  user_b UUID := '5c7380ea-baf9-463c-85bd-f2e7610140f4';
   dog_buddy   UUID := gen_random_uuid();
   dog_luna    UUID := gen_random_uuid();
   dog_max     UUID := gen_random_uuid();
   dog_rocky   UUID := gen_random_uuid();
   dog_bella   UUID := gen_random_uuid();
   dog_bailey  UUID := gen_random_uuid();
-
-  -- Walk IDs
   walk_1 UUID := gen_random_uuid();
   walk_2 UUID := gen_random_uuid();
   walk_3 UUID := gen_random_uuid();
   walk_4 UUID := gen_random_uuid();
   walk_5 UUID := gen_random_uuid();
   walk_6 UUID := gen_random_uuid();
-
-  -- Adoption IDs
   adopt_1 UUID := gen_random_uuid();
   adopt_2 UUID := gen_random_uuid();
-
-  -- Review IDs
   review_1 UUID := gen_random_uuid();
   review_2 UUID := gen_random_uuid();
 
 BEGIN
 
-  -- ============================================================
-  -- 1. UPDATE PROFILES
-  -- ============================================================
   UPDATE public.profiles SET
     display_name = 'Иван Петров',
     total_points = 1850,
@@ -58,12 +34,6 @@ BEGIN
     streak_count = 3,
     last_streak_date = CURRENT_DATE
   WHERE id = user_b;
-
-  -- ============================================================
-  -- 2. INSERT DOGS
-  -- ============================================================
-
-  -- User A's dogs
   INSERT INTO public.dogs (id, owner_id, name, breed, description, status, size, age, latitude, longitude)
   VALUES
     (dog_buddy, user_a, 'Buddy', 'Golden Retriever',
@@ -77,8 +47,6 @@ BEGIN
     (dog_max, user_a, 'Max', 'Chihuahua',
      'Tiny but brave! Available for walks and adoption.',
      'both', 'small', '4 years', 42.6990, 23.3150);
-
-  -- User B's dogs
   INSERT INTO public.dogs (id, owner_id, name, breed, description, status, size, age, latitude, longitude)
   VALUES
     (dog_rocky, user_b, 'Rocky', 'German Shepherd',
@@ -88,17 +56,9 @@ BEGIN
     (dog_bella, user_b, 'Bella', 'Labrador Mix',
      'Playful and loves children. Available for walks and adoption.',
      'both', 'medium', '1 year', 42.7010, 23.3190),
-
-    -- Bailey was adopted by User A from User B
     (dog_bailey, user_a, 'Bailey', 'Poodle',
      'Recently adopted! Adjusting well to the new home.',
      'adopted', 'small', '2 years', 42.6965, 23.3240);
-
-  -- ============================================================
-  -- 3. INSERT WALKS
-  -- ============================================================
-
-  -- Walk 1: Completed — User B walked User A's Buddy (2 days ago)
   INSERT INTO public.walks (id, walker_id, dog_id, status, started_at, ended_at, distance_km, duration_mins, points_earned, multiplier, route_coordinates)
   VALUES (
     walk_1, user_b, dog_buddy, 'completed',
@@ -116,8 +76,6 @@ BEGIN
       {"lat": 42.6980, "lng": 23.3220, "timestamp": 2100}
     ]'::jsonb
   );
-
-  -- Walk 2: Completed — User A walked User B's Rocky (yesterday)
   INSERT INTO public.walks (id, walker_id, dog_id, status, started_at, ended_at, distance_km, duration_mins, points_earned, multiplier, route_coordinates)
   VALUES (
     walk_2, user_a, dog_rocky, 'completed',
@@ -136,8 +94,6 @@ BEGIN
       {"lat": 42.6930, "lng": 23.3350, "timestamp": 3100}
     ]'::jsonb
   );
-
-  -- Walk 3: Completed — User B walked adopted Bailey (with 1.5x bonus)
   INSERT INTO public.walks (id, walker_id, dog_id, status, started_at, ended_at, distance_km, duration_mins, points_earned, multiplier, route_coordinates)
   VALUES (
     walk_3, user_b, dog_bailey, 'completed',
@@ -152,8 +108,6 @@ BEGIN
       {"lat": 42.6970, "lng": 23.3235, "timestamp": 1400}
     ]'::jsonb
   );
-
-  -- Walk 4: Active — User A currently walking User B's Bella
   INSERT INTO public.walks (id, walker_id, dog_id, status, started_at, distance_km, duration_mins, multiplier, route_coordinates)
   VALUES (
     walk_4, user_a, dog_bella, 'active',
@@ -165,54 +119,28 @@ BEGIN
       {"lat": 42.7020, "lng": 23.3215, "timestamp": 600}
     ]'::jsonb
   );
-
-  -- Walk 5: Approved — User B approved to walk User A's Max
   INSERT INTO public.walks (id, walker_id, dog_id, status, multiplier)
   VALUES (walk_5, user_b, dog_max, 'approved', 1.0);
-
-  -- Walk 6: Requested — User A requested to walk User B's Rocky again
   INSERT INTO public.walks (id, walker_id, dog_id, status, multiplier)
   VALUES (walk_6, user_a, dog_rocky, 'requested', 1.0);
-
-  -- ============================================================
-  -- 4. INSERT ADOPTION REQUESTS
-  -- ============================================================
-
-  -- Approved: User A adopted Bailey from User B
   INSERT INTO public.adoption_requests (id, dog_id, adopter_id, status, points_awarded, created_at, updated_at)
   VALUES (
     adopt_1, dog_bailey, user_a, 'approved', true,
     now() - interval '10 days',
     now() - interval '9 days'
   );
-
-  -- Pending: User B wants to adopt Luna from User A
   INSERT INTO public.adoption_requests (id, dog_id, adopter_id, status, points_awarded)
   VALUES (adopt_2, dog_luna, user_b, 'pending', false);
-
-  -- ============================================================
-  -- 5. INSERT REVIEWS
-  -- ============================================================
-
-  -- User A reviews User B's walk with Buddy
   INSERT INTO public.reviews (id, walker_id, owner_id, walk_id, rating, comment)
   VALUES (
     review_1, user_b, user_a, walk_1,
     5, 'Мария беше страхотна с Buddy! Ще я поканим отново.'
   );
-
-  -- User B reviews User A's walk with Rocky
   INSERT INTO public.reviews (id, walker_id, owner_id, walk_id, rating, comment)
   VALUES (
     review_2, user_a, user_b, walk_2,
     4, 'Ivan took great care of Rocky. Very responsible walker.'
   );
-
-  -- ============================================================
-  -- 6. INSERT NOTIFICATIONS
-  -- ============================================================
-
-  -- User A notifications
   INSERT INTO public.notifications (user_id, type, title, body, related_entity_type, related_entity_id, read, created_at)
   VALUES
     (user_a, 'walk_requested', 'Walk Request', 'Мария wants to walk your dog Max.', 'walk', walk_5, true, now() - interval '5 hours'),
@@ -220,8 +148,6 @@ BEGIN
     (user_a, 'adoption_request', 'Adoption Request', 'Мария wants to adopt Luna.', 'adoption_request', adopt_2, false, now() - interval '1 hour'),
     (user_a, 'adoption_approved', 'Adoption Approved', 'Your adoption of Bailey has been approved! +500 points!', 'adoption_request', adopt_1, true, now() - interval '9 days'),
     (user_a, 'leaderboard_change', 'Leaderboard Update', 'You moved up to #1 on the leaderboard!', NULL, NULL, false, now() - interval '30 minutes');
-
-  -- User B notifications
   INSERT INTO public.notifications (user_id, type, title, body, related_entity_type, related_entity_id, read, created_at)
   VALUES
     (user_b, 'walk_requested', 'Walk Request', 'Иван wants to walk your dog Rocky.', 'walk', walk_6, false, now() - interval '2 hours'),

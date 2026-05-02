@@ -1,15 +1,3 @@
-/**
- * Points calculation for walks.
- *
- * Formula:
- *   base_points = floor(distance_km * 10) + floor(duration_mins * 0.5)
- *   multiplier = 1.0 (default) | 1.5 (if walker adopted this dog via the app)
- *   total_points = floor(base_points * multiplier)
- *
- * Note: adoption request bonus points are awarded server-side
- * in SQL RPC public.approve_adoption.
- */
-
 const DISTANCE_MULTIPLIER = 10;
 const DURATION_MULTIPLIER = 0.5;
 const ADOPTED_DOG_MULTIPLIER = 1.5;

@@ -66,7 +66,6 @@ export function useDogMutations() {
       let photoUrl = existingPhotoUrl;
 
       if (form.photoBase64) {
-        // Upload new photo, then delete old one
         photoUrl = await uploadImage(DOG_PHOTOS_BUCKET, form.photoBase64, 'dog.jpg');
         await deleteImage(existingPhotoUrl);
       }

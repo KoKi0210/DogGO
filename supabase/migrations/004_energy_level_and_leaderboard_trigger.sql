@@ -1,16 +1,6 @@
--- ============================================================
--- Migration 004: energy_level column + leaderboard notification trigger
--- ============================================================
-
--- 1. Add energy_level column to dogs table
 ALTER TABLE public.dogs
   ADD COLUMN IF NOT EXISTS energy_level VARCHAR
   CHECK (energy_level IN ('low', 'medium', 'high'));
-
--- 2. Leaderboard change notification trigger
---    Fires after total_points is updated on a profile.
---    If the user's rank improved and they are in the top 10,
---    insert a leaderboard_change notification.
 
 CREATE OR REPLACE FUNCTION public.notify_leaderboard_change()
 RETURNS TRIGGER AS $$

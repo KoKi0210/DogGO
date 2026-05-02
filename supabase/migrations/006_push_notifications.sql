@@ -1,11 +1,5 @@
--- =============================================================
--- Migration 006: Push notifications via pg_net
--- =============================================================
-
--- 1. Enable pg_net extension (HTTP requests from Postgres)
 CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
 
--- 2. Function that sends a push notification via Expo Push API
 CREATE OR REPLACE FUNCTION public.send_push_notification()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -46,7 +40,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 3. Trigger on notifications insert
 DROP TRIGGER IF EXISTS on_notification_send_push ON public.notifications;
 CREATE TRIGGER on_notification_send_push
   AFTER INSERT ON public.notifications

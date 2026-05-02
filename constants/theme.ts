@@ -1,7 +1,3 @@
-/**
- * DogGO theme — Claymorphism design system.
- */
-
 import { ViewStyle } from 'react-native';
 
 export const Colors = {

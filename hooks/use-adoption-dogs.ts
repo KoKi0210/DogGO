@@ -77,7 +77,7 @@ export function useAdoptionDogs(
 
   useEffect(() => {
     let cancelled = false;
-    fetchDogs().then(() => { if (cancelled) { /* unmounted */ } });
+    fetchDogs().then(() => { if (cancelled) { } });
     return () => { cancelled = true; };
   }, [fetchDogs]);
 

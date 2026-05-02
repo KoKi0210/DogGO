@@ -32,7 +32,7 @@ export function useLeaderboard(period: 'daily' | 'weekly' | 'monthly' | 'allTime
 
   useEffect(() => {
     let cancelled = false;
-    fetchLeaderboard().then(() => { if (cancelled) { /* unmounted */ } });
+    fetchLeaderboard().then(() => { if (cancelled) { } });
     return () => { cancelled = true; };
   }, [fetchLeaderboard]);
 

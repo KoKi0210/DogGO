@@ -1,4 +1,3 @@
--- Allow the walker or the dog's owner to delete a walk
 CREATE POLICY "Walker or dog owner can delete walks"
   ON public.walks FOR DELETE
   TO authenticated

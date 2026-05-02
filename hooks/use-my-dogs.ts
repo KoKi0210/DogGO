@@ -38,7 +38,6 @@ export function useMyDogs() {
 
     fetchDogs().then(() => {
       if (cancelled) {
-        // Hook unmounted; fresh mount will re-fetch.
       }
     });
 

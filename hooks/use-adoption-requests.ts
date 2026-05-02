@@ -25,14 +25,12 @@ export function useAdoptionRequests() {
     try {
       setIsLoading(true);
 
-      // Sent by me
       const { data: sentData } = await supabase
         .from('adoption_requests')
         .select('*, dog:dogs(*), adopter:profiles(*)')
         .eq('adopter_id', user.id)
         .order('created_at', { ascending: false });
 
-      // Get IDs of dogs owned by this user
       const { data: myDogs } = await supabase
         .from('dogs')
         .select('id')
@@ -40,7 +38,6 @@ export function useAdoptionRequests() {
 
       const myDogIds = (myDogs ?? []).map((d: { id: string }) => d.id);
 
-      // Received (dogs I own)
       let receivedItems: AdoptionRequestWithDetails[] = [];
       if (myDogIds.length > 0) {
         const { data: receivedData } = await supabase
@@ -66,7 +63,7 @@ export function useAdoptionRequests() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchRequests().then(() => { if (cancelled) { /* unmounted */ } });
+    fetchRequests().then(() => { if (cancelled) { } });
     return () => { cancelled = true; };
   }, [fetchRequests]);
 

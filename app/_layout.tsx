@@ -13,7 +13,6 @@ import { usePushNotifications } from '@/hooks/use-push-notifications';
 
 SplashScreen.preventAutoHideAsync();
 
-// TODO REMOVE THIS
 export const unstable_settings = {
   anchor: '(tabs)',
 };
@@ -63,7 +62,6 @@ function RootLayoutNav() {
   );
 }
 
-// TODO REMOVE THIS
 export default function RootLayout() {
   return (
     <ThemePreferenceProvider>

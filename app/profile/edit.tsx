@@ -50,10 +50,8 @@ export default function EditProfileScreen() {
       let avatarUrl = profile?.avatar_url ?? null;
 
       if (avatarBase64) {
-        // Upload new avatar
         const newUrl = await uploadImage('avatars', avatarBase64, `${user.id}/avatar`);
         if (newUrl) {
-          // Delete old avatar if it exists
           if (avatarUrl) await deleteImage(avatarUrl);
           avatarUrl = newUrl;
         }
