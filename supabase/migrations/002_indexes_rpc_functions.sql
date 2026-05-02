@@ -38,11 +38,11 @@ DECLARE
   start_date TIMESTAMPTZ;
 BEGIN
   IF period = 'daily' THEN
-    start_date := date_trunc('day', now());
+    start_date := now() - INTERVAL '1 day';
   ELSIF period = 'weekly' THEN
-    start_date := date_trunc('week', now());
+    start_date := now() - INTERVAL '7 days';
   ELSIF period = 'monthly' THEN
-    start_date := date_trunc('month', now());
+    start_date := now() - INTERVAL '30 days';
   ELSE
     start_date := '1970-01-01'::TIMESTAMPTZ;
   END IF;

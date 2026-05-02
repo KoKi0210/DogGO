@@ -22,12 +22,11 @@ export function WalkMap({
   const accent = useThemeColor({}, 'accent');
   const placeholder = useThemeColor({}, 'placeholder');
 
-  if (route.length === 0) {
-    return <View style={[styles.placeholder, { height, backgroundColor: placeholder }]} />;
-  }
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { coordinates, region, firstPoint, lastPoint } = useMemo(() => {
+    if (route.length === 0) {
+      return { coordinates: [], region: null, firstPoint: null, lastPoint: null };
+    }
+
     const coords = route.map((p) => ({ latitude: p.lat, longitude: p.lng }));
     const last = coords[coords.length - 1];
     const first = coords[0];
@@ -56,11 +55,15 @@ export function WalkMap({
     return { coordinates: coords, region: reg, firstPoint: first, lastPoint: last };
   }, [route, followUser]);
 
+  if (route.length === 0) {
+    return <View style={[styles.placeholder, { height, backgroundColor: placeholder }]} />;
+  }
+
   return (
     <View style={[styles.container, { height }]}>
       <MapView
         style={styles.map}
-        region={region}
+        region={region!}
         scrollEnabled={scrollEnabled}
         zoomEnabled={scrollEnabled}
         rotateEnabled={false}
@@ -68,12 +71,12 @@ export function WalkMap({
         <Polyline coordinates={coordinates} strokeColor={primary} strokeWidth={4} />
         {showMarkers && coordinates.length > 1 && (
           <>
-            <Marker coordinate={firstPoint} pinColor={accent} title="Start" />
-            <Marker coordinate={lastPoint} pinColor={primary} title="End" />
+            <Marker coordinate={firstPoint!} pinColor={accent} title="Start" />
+            <Marker coordinate={lastPoint!} pinColor={primary} title="End" />
           </>
         )}
         {showMarkers && coordinates.length === 1 && (
-          <Marker coordinate={firstPoint} pinColor={primary} />
+          <Marker coordinate={firstPoint!} pinColor={primary} />
         )}
       </MapView>
     </View>
