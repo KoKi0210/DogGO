@@ -36,7 +36,6 @@ export default function LeaderboardScreen() {
     }, [refresh])
   );
 
-  // Top-3 and rest split
   const podiumEntries = entries.slice(0, 3);
   const restEntries = entries.slice(3);
 
@@ -77,21 +76,17 @@ export default function LeaderboardScreen() {
         ListHeaderComponent={
           podiumEntries.length > 0 ? (
             <View>
-              {/* Podium — ranks 1-3 */}
               <View style={styles.podium}>
-                {/* Rank 2 — left */}
                 {podiumEntries[1] && (
                   <View style={styles.podiumSide}>
                     <LeaderboardEntryCard entry={podiumEntries[1]} isPodium />
                   </View>
                 )}
-                {/* Rank 1 — center, elevated */}
                 {podiumEntries[0] && (
                   <View style={styles.podiumCenter}>
                     <LeaderboardEntryCard entry={podiumEntries[0]} isPodium />
                   </View>
                 )}
-                {/* Rank 3 — right */}
                 {podiumEntries[2] && (
                   <View style={styles.podiumSide}>
                     <LeaderboardEntryCard entry={podiumEntries[2]} isPodium />

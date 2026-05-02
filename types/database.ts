@@ -1,7 +1,3 @@
-// ============================================================
-// Enums
-// ============================================================
-
 export type UserRole = 'user' | 'shelter' | 'volunteer';
 export type DogStatus = 'walk' | 'adoption' | 'both' | 'adopted';
 export type DogSize = 'small' | 'medium' | 'large';
@@ -16,10 +12,6 @@ export type NotificationType =
   | 'adoption_request'
   | 'adoption_approved'
   | 'leaderboard_change';
-
-// ============================================================
-// Table Row Types
-// ============================================================
 
 export interface Profile {
   id: string;
@@ -99,10 +91,6 @@ export interface Notification {
   created_at: string;
 }
 
-// ============================================================
-// RPC Return Types
-// ============================================================
-
 export interface LeaderboardEntry {
   user_id: string;
   display_name: string;
@@ -115,10 +103,6 @@ export interface StreakResult {
   new_streak: number;
   bonus_points: number;
 }
-
-// ============================================================
-// Supabase Database Type
-// ============================================================
 
 export interface Database {
   public: {

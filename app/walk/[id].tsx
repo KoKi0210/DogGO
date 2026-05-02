@@ -83,7 +83,6 @@ export default function WalkDetailScreen() {
         onPress: async () => {
           const result = tracking.stopTracking();
 
-          // Prompt for selfie
           let selfieUrl: string | null = null;
           let selfiePreviewUri: string | null = null;
           try {
@@ -107,7 +106,6 @@ export default function WalkDetailScreen() {
               }
             }
           } catch {
-            // Selfie is optional, continue without it
           }
 
           try {
@@ -254,7 +252,6 @@ export default function WalkDetailScreen() {
     );
   }
 
-  // Completed — redirect to summary
   if (walk.status === 'completed') {
     return <Loading fullScreen />;
   }

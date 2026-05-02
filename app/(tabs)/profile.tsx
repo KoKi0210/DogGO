@@ -59,18 +59,15 @@ export default function ProfileScreen() {
     <ScrollView
       style={[styles.container, { backgroundColor: background }]}
       contentContainerStyle={styles.content}>
-      {/* Gradient Header */}
       <LinearGradient
         colors={[primary, primaryLight]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradientHeader}>
-        {/* Decorative blobs */}
         <View style={styles.headerBlob1} />
         <View style={styles.headerBlob2} />
       </LinearGradient>
 
-      {/* Avatar pops out below gradient */}
       <View style={styles.avatarWrapper}>
         <Avatar uri={profile?.avatar_url} name={profile?.display_name} size={80} />
       </View>
@@ -86,7 +83,6 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Stats Row */}
       <View style={styles.statsRow}>
         <ClayCard shadowLevel="md" radius={20} style={{ flex: 1, padding: 0 }}>
           <LinearGradient
@@ -118,7 +114,6 @@ export default function ProfileScreen() {
         </ClayCard>
       </View>
 
-      {/* Section rows */}
       <View style={styles.sections}>
         <ProfileSectionRow
           emoji="pawprint.fill"
