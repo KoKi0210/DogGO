@@ -8,7 +8,6 @@ export type ThemedTextProps = TextProps & {
   type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
 };
 
-// TODO REMOVE THIS COMPONENT AS IT IS NOT USED
 export function ThemedText({
   style,
   lightColor,

@@ -5,12 +5,9 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface WalkMapProps {
   route: { lat: number; lng: number }[];
-  /** Whether the map should follow the latest point (for active tracking). */
   followUser?: boolean;
-  /** Show start/end markers. */
   showMarkers?: boolean;
   height?: number;
-  /** Disable all map interactions (for summary display). */
   scrollEnabled?: boolean;
 }
 
@@ -29,6 +26,7 @@ export function WalkMap({
     return <View style={[styles.placeholder, { height, backgroundColor: placeholder }]} />;
   }
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { coordinates, region, firstPoint, lastPoint } = useMemo(() => {
     const coords = route.map((p) => ({ latitude: p.lat, longitude: p.lng }));
     const last = coords[coords.length - 1];

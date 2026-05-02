@@ -9,14 +9,6 @@ interface ClayCardProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * Multi-layer shadow primitive for claymorphism depth.
- *
- * React Native only supports one shadow per View, so we nest Views
- * with different shadow configs to simulate stacked clay shadows.
- * Outer Views are transparent with overflow visible; the innermost
- * View carries the actual background + children.
- */
 export function ClayCard({
   children,
   shadowLevel = 'md',
@@ -26,9 +18,6 @@ export function ClayCard({
   const card = useThemeColor({}, 'card');
   const layers = Shadows[shadowLevel === 'sm' ? 'claySm' : shadowLevel === 'lg' ? 'clayLg' : 'clayMd'];
 
-  // Build from outermost (last layer) to innermost (first layer)
-  // Last layer = deepest shadow (largest offset), wraps everything
-  // First layer = nearest shadow (brand tint), closest to surface
   const reversed = [...layers].reverse();
 
   let content = (
