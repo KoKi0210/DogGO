@@ -2,23 +2,18 @@
  * DogGO theme — Claymorphism design system.
  */
 
-import { Platform, ViewStyle } from 'react-native';
+import { ViewStyle } from 'react-native';
 
 export const Colors = {
   light: {
     text: '#11181C',
     background: '#FFF8F5',
     tint: '#FF6B35',
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: '#FF6B35',
     primary: '#FF6B35',
     primaryLight: '#FF9A6C',
     secondary: '#004E89',
     secondaryLight: '#2E6FA8',
     accent: '#2EC4B6',
-    success: '#4CAF50',
-    warning: '#FF9800',
     error: '#F44336',
     card: '#FFFFFF',
     border: '#E0E0E0',
@@ -42,16 +37,11 @@ export const Colors = {
     text: '#ECEDEE',
     background: '#1A1210',
     tint: '#FF6B35',
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: '#FF6B35',
     primary: '#FF6B35',
     primaryLight: '#FF9A6C',
     secondary: '#3A8FD6',
     secondaryLight: '#5AAAE6',
     accent: '#2EC4B6',
-    success: '#66BB6A',
-    warning: '#FFA726',
     error: '#EF5350',
     card: '#241C1A',
     border: '#2C2F33',
@@ -73,38 +63,9 @@ export const Colors = {
   },
 };
 
-export const Spacing = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
-  xxl: 32,
-  xxxl: 48,
-} as const;
-
-export const TypographyScale = {
-  size: { xs: 12, sm: 14, md: 16, lg: 18, xl: 22, xxl: 28, xxxl: 36 },
-  weight: {
-    regular: '400' as const,
-    medium: '500' as const,
-    semibold: '600' as const,
-    bold: '700' as const,
-    extrabold: '800' as const,
-    black: '900' as const,
-  },
-  letterSpacing: {
-    tight: -0.3,
-    tighter: -0.5,
-  },
-} as const;
-
 export const Radius = {
-  sm: 8,
   md: 16,
   lg: 24,
-  xl: 32,
-  full: 999,
 } as const;
 
 type ShadowLayer = Pick<
@@ -129,24 +90,3 @@ export const Shadows: Record<'claySm' | 'clayMd' | 'clayLg', ShadowLayer[]> = {
   ],
 };
 
-// TODO REMOVE THIS
-export const Fonts = Platform.select({
-  ios: {
-    sans: 'system-ui',
-    serif: 'ui-serif',
-    rounded: 'ui-rounded',
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});

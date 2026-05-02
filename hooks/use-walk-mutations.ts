@@ -212,6 +212,22 @@ export function useWalkMutations() {
     }
   }
 
+  async function deleteWalk(walkId: string) {
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from('walks')
+        .delete()
+        .eq('id', walkId);
+      if (error) throw error;
+    } catch (error: unknown) {
+      console.error('Error deleting walk:', error);
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return {
     requestWalk,
     startOwnDogWalk,
@@ -220,6 +236,7 @@ export function useWalkMutations() {
     startWalk,
     endWalk,
     cancelWalk,
+    deleteWalk,
     isSubmitting,
   };
 }

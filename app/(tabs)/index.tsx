@@ -104,20 +104,18 @@ export default function HomeScreen() {
 
   const keyExtractor = useCallback((item: DogWithDistance) => item.id, []);
 
-  // Banner spring animation
   const bannerScale = useSharedValue(1);
   const bannerAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: bannerScale.value }],
   }));
 
-  // FAB entrance animation
   const fabScale = useSharedValue(0.7);
   const fabAnimStyle = useAnimatedStyle(() => ({
     transform: [{ scale: fabScale.value }],
   }));
   useEffect(() => {
     fabScale.value = withSpring(1, { damping: 8, stiffness: 180 });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: background }]}>

@@ -13,7 +13,7 @@ import { useNotifications } from '@/hooks/use-notifications';
 function TabBarBackground() {
   const colorScheme = useColorScheme();
   const card = Colors[colorScheme ?? 'light'].card;
-  const shadow = Shadows.clayMd[1]; // neutral shadow for the tab bar
+  const shadow = Shadows.clayMd[1];
 
   return (
     <View

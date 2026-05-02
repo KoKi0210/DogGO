@@ -83,21 +83,3 @@ export function formatDuration(minutes: number): string {
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
-// TODO REMOVE THIS
-/**
- * Calculate total distance from a series of coordinates.
- */
-export function calculateRouteDistance(
-  coords: { lat: number; lng: number }[]
-): number {
-  let total = 0;
-  for (let i = 1; i < coords.length; i++) {
-    total += calculateDistance(
-      coords[i - 1].lat,
-      coords[i - 1].lng,
-      coords[i].lat,
-      coords[i].lng
-    );
-  }
-  return Math.round(total * 100) / 100;
-}

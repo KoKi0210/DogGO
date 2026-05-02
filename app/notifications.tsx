@@ -26,7 +26,6 @@ export default function NotificationsScreen() {
   const handlePress = useCallback((notification: Notification) => {
     markAsRead(notification.id);
 
-    // Navigate based on entity type
     if (notification.related_entity_type && notification.related_entity_id) {
       switch (notification.related_entity_type) {
         case 'walk':
