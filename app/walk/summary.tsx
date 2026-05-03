@@ -194,12 +194,10 @@ export default function WalkSummaryScreen() {
           {t('walks.greatWalk')}
         </Text>
 
-        {/* Route Map */}
         {route.length > 0 && (
           <WalkMap route={route} showMarkers scrollEnabled={false} height={220} />
         )}
 
-        {/* Stats Row */}
         <WalkStats
           distanceKm={distanceKm}
           durationMins={durationMins}
@@ -208,7 +206,6 @@ export default function WalkSummaryScreen() {
           pointsEarned={pointsEarned}
         />
 
-        {/* Points Breakdown */}
         <Card style={styles.pointsCard}>
           <Text style={[styles.pointsTitle, { color: text }]}>{t('walks.pointsBreakdown')}</Text>
 
@@ -232,7 +229,6 @@ export default function WalkSummaryScreen() {
           </View>
         </Card>
 
-        {/* Dog Info */}
         {dog && (
           <Card style={styles.dogCard}>
             <View style={styles.dogRow}>
@@ -251,7 +247,6 @@ export default function WalkSummaryScreen() {
           </Card>
         )}
 
-        {/* Selfie */}
         {resolvedSelfieCandidates.length > 0 && (
           <View style={styles.selfieSection}>
             {!selfieLoadFailed && selfieToShow ? (
@@ -269,7 +264,6 @@ export default function WalkSummaryScreen() {
           </View>
         )}
 
-        {/* Leave a Review (for dog owners) */}
         {canReview && (
           <Card style={styles.reviewCard}>
             <Text style={[styles.reviewTitle, { color: text }]}>{t('reviews.leaveReview')}</Text>
@@ -293,7 +287,6 @@ export default function WalkSummaryScreen() {
           </Card>
         )}
 
-        {/* Show existing review */}
         {existingReview && (
           <Card style={styles.reviewCard}>
             <Text style={[styles.reviewTitle, { color: text }]}>{t('reviews.yourReview')}</Text>

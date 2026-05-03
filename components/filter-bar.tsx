@@ -14,7 +14,6 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { Shadows } from '@/constants/theme';
 import { DogSize, EnergyLevel } from '@/types/database';
 
-// TODO REMOVE THIS COMPONENT AS IT IS NOT USED
 interface FilterBarProps {
   selectedSizes: DogSize[];
   onToggleSize: (size: DogSize) => void;
@@ -86,7 +85,6 @@ export function FilterBar({
 
   return (
     <>
-      {/* Trigger button */}
       <Pressable onPress={() => setOpen(true)} style={styles.triggerWrapper}>
         <View style={[styles.triggerBtn, { backgroundColor: card }, chipShadow]}>
           <Text style={[styles.triggerIcon, { color: primary }]}>⚙</Text>
@@ -103,7 +101,6 @@ export function FilterBar({
         </View>
       </Pressable>
 
-      {/* Bottom-sheet modal */}
       <Modal
         visible={open}
         animationType="slide"
@@ -111,10 +108,8 @@ export function FilterBar({
         onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.backdrop} onPress={() => setOpen(false)} />
         <SafeAreaView style={[styles.sheet, { backgroundColor: background }]}>
-          {/* Handle */}
           <View style={[styles.handle, { backgroundColor: textSecondary + '40' }]} />
 
-          {/* Header */}
           <View style={styles.sheetHeader}>
             <Text style={[styles.sheetTitle, { color: text }]}>{t('filters.title')}</Text>
             {activeCount > 0 && (
@@ -127,7 +122,6 @@ export function FilterBar({
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.sheetContent}>
-            {/* Size */}
             <Text style={[styles.rowLabel, { color: textSecondary }]}>{t('dogs.size')}</Text>
             <View style={styles.chipRow}>
               {SIZES.map((size) =>
@@ -140,7 +134,6 @@ export function FilterBar({
               )}
             </View>
 
-            {/* Energy */}
             <Text style={[styles.rowLabel, { color: textSecondary }]}>{t('filters.energyLevel')}</Text>
             <View style={styles.chipRow}>
               {ENERGY_LEVELS.map((e) =>
@@ -153,7 +146,6 @@ export function FilterBar({
               )}
             </View>
 
-            {/* Distance */}
             <Text style={[styles.rowLabel, { color: textSecondary }]}>{t('filters.distance')}</Text>
             <View style={styles.chipRow}>
               {DISTANCES.map((d) =>
@@ -167,7 +159,6 @@ export function FilterBar({
             </View>
           </ScrollView>
 
-          {/* Done button */}
           <Pressable onPress={() => setOpen(false)} style={styles.doneWrapper}>
             <LinearGradient
               colors={[primary, primaryLight]}
@@ -206,7 +197,6 @@ const styles = StyleSheet.create({
   },
   badgeText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800' },
 
-  // Modal
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.35)',
@@ -215,7 +205,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     paddingBottom: 8,
-    // clip the top corners
     overflow: 'hidden',
   },
   handle: {

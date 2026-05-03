@@ -41,7 +41,6 @@ export function useWalkMutations() {
     if (!user) throw new Error('User not authenticated');
     setIsSubmitting(true);
     try {
-      // Reuse existing active walk if the user already has one.
       const { data: activeWalks, error: activeWalkError } = await supabase
         .from('walks')
         .select('*')
@@ -159,7 +158,6 @@ export function useWalkMutations() {
         data.isAdoptedDog
       );
 
-      // Update walk record
       const { error: walkError } = await supabase
         .from('walks')
         .update({
@@ -176,7 +174,6 @@ export function useWalkMutations() {
 
       if (walkError) throw walkError;
 
-      // Add points to walker profile
       const { error: pointsError } = await supabase.rpc('increment_points', {
         user_id: user.id,
         points_to_add: totalPoints,
@@ -184,7 +181,6 @@ export function useWalkMutations() {
 
       if (pointsError) throw pointsError;
 
-      // Update streak (first walk of the day increments streak + awards bonus)
       const streakResult = await updateStreak();
 
       return { basePoints, multiplier, totalPoints, streakBonus: streakResult?.bonus_points ?? 0 };

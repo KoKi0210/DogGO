@@ -57,7 +57,7 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
         false
       );
     }
-  }, [isUnread]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isUnread]);
 
   return (
     <Pressable onPress={onPress} disabled={!onPress} style={styles.wrapper}>

@@ -24,10 +24,6 @@ function parseStorageObject(url: string): { bucket: string; path: string } | nul
   };
 }
 
-/**
- * Resolve an image URL to a loadable URL for the current user.
- * For Supabase storage URLs, it attempts a signed URL and falls back to the original URL.
- */
 export async function resolveImageUrl(url: string): Promise<string> {
   const trimmed = url.trim();
   if (!trimmed) return trimmed;
@@ -55,10 +51,6 @@ export async function resolveImageUrl(url: string): Promise<string> {
   }
 }
 
-/**
- * Upload an image to Supabase Storage.
- * Returns the public URL of the uploaded image.
- */
 export async function uploadImage(
   bucket: StorageBucket,
   base64: string,
@@ -101,9 +93,6 @@ export async function uploadImage(
   }
 }
 
-/**
- * Delete an image from Supabase Storage.
- */
 export async function deleteImage(photoUrl: string | null): Promise<void> {
   if (!photoUrl) return;
 

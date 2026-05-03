@@ -18,7 +18,6 @@ export function usePendingRequests() {
     try {
       setIsLoading(true);
 
-      // Get IDs of dogs owned by this user
       const { data: myDogs } = await supabase
         .from('dogs')
         .select('id')
@@ -51,7 +50,7 @@ export function usePendingRequests() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchPending().then(() => { if (cancelled) { /* unmounted */ } });
+    fetchPending().then(() => { if (cancelled) { } });
     return () => { cancelled = true; };
   }, [fetchPending]);
 

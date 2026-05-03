@@ -52,7 +52,6 @@ export default function AddDogScreen() {
   const errorColor = useThemeColor({}, 'error');
   const surfacePrimary = useThemeColor({}, 'surfacePrimary');
 
-  // Form state
   const [name, setName] = useState('');
   const [breed, setBreed] = useState('');
   const [age, setAge] = useState('');
@@ -66,11 +65,9 @@ export default function AddDogScreen() {
   const [longitude, setLongitude] = useState<number | null>(null);
   const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
 
-  // Validation
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoadingDog, setIsLoadingDog] = useState(isEditing);
 
-  // Load existing dog data for editing
   useEffect(() => {
     if (!dogId) return;
     let cancelled = false;
@@ -111,16 +108,15 @@ export default function AddDogScreen() {
     return () => { cancelled = true; };
   }, [dogId, t, router]);
 
-  // Set initial map location from GPS
   useEffect(() => {
-    if (latitude != null) return; // Already set (editing)
+    if (latitude != null) return;
     getCurrentLocation().then((loc) => {
       if (loc && latitude == null) {
         setLatitude(loc.latitude);
         setLongitude(loc.longitude);
       }
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   function validate(): boolean {
     const newErrors: Record<string, string> = {};
@@ -243,7 +239,6 @@ export default function AddDogScreen() {
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Photo Section */}
           <Card style={styles.photoSection}>
             {photoUri ? (
               <View style={styles.photoPreviewContainer}>
@@ -279,7 +274,6 @@ export default function AddDogScreen() {
             </View>
           </Card>
 
-          {/* Basic Info */}
           <Input
             label={t('dogs.name')}
             value={name}
@@ -310,7 +304,6 @@ export default function AddDogScreen() {
             style={styles.textArea}
           />
 
-          {/* Size Picker */}
           <Text style={[styles.label, { color: textSecondary }]}>{t('dogs.size')}</Text>
           <View style={styles.chipRow}>
             {SIZES.map((s) => (
@@ -329,7 +322,6 @@ export default function AddDogScreen() {
             ))}
           </View>
 
-          {/* Status Picker */}
           <Text style={[styles.label, { color: textSecondary }]}>{t('dogs.status')}</Text>
           <View style={styles.chipRow}>
             {STATUSES.map((s) => (
@@ -348,7 +340,6 @@ export default function AddDogScreen() {
             ))}
           </View>
 
-          {/* Energy Level Picker */}
           <Text style={[styles.label, { color: textSecondary }]}>{t('dogs.energyLevel')}</Text>
           <View style={styles.chipRow}>
             {ENERGY_LEVELS.map((e) => (
@@ -367,7 +358,6 @@ export default function AddDogScreen() {
             ))}
           </View>
 
-          {/* Location Map */}
           <Text style={[styles.label, { color: textSecondary }]}>{t('dogs.location')}</Text>
           <Text style={[styles.hint, { color: textSecondary }]}>{t('dogs.locationHint')}</Text>
           <View style={styles.mapContainer}>
@@ -382,7 +372,6 @@ export default function AddDogScreen() {
             </MapView>
           </View>
 
-          {/* Actions */}
           <View style={styles.actions}>
             <Button
               title={isEditing ? t('common.save') : t('dogs.addDog')}

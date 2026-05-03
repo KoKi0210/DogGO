@@ -133,7 +133,6 @@ export default function AdoptionDetailScreen() {
     <>
       <Stack.Screen options={{ title: t('adoption.adoptionRequest') }} />
       <ScrollView style={[styles.container, { backgroundColor: background }]} contentContainerStyle={styles.content}>
-        {/* Status Badge */}
         <View style={[styles.statusCard, { backgroundColor: statusColor + '20' }]}>
           <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
             <Text style={styles.statusText}>
@@ -149,7 +148,6 @@ export default function AdoptionDetailScreen() {
           </Text>
         </View>
 
-        {/* Dog Info */}
         {dog && (
           <Card style={styles.dogCard}>
             <View style={styles.dogRow}>
@@ -168,7 +166,6 @@ export default function AdoptionDetailScreen() {
           </Card>
         )}
 
-        {/* Adopter Info (visible to owner) */}
         {isOwner && adopter && (
           <Card>
             <Text style={[styles.sectionLabel, { color: textSecondary }]}>{t('adoption.adopter')}</Text>
@@ -182,7 +179,6 @@ export default function AdoptionDetailScreen() {
           </Card>
         )}
 
-        {/* Owner Info (visible to adopter) */}
         {isAdopter && owner && (
           <Card>
             <Text style={[styles.sectionLabel, { color: textSecondary }]}>{t('dogs.owner')}</Text>
@@ -196,7 +192,6 @@ export default function AdoptionDetailScreen() {
           </Card>
         )}
 
-        {/* Actions for Owner on Pending */}
         {isOwner && request.status === 'pending' && (
           <View style={styles.actions}>
             <Button
@@ -213,7 +208,6 @@ export default function AdoptionDetailScreen() {
           </View>
         )}
 
-        {/* Success card for approved */}
         {request.status === 'approved' && (
           <Card style={{ ...styles.successCard, backgroundColor: accent + '15' }}>
             <IconSymbol name="party.popper" size={40} color={primary} />

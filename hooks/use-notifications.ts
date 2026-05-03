@@ -64,7 +64,7 @@ export function useNotifications() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchNotifications().then(() => { if (cancelled) { /* unmounted */ } });
+    fetchNotifications().then(() => { if (cancelled) { } });
     return () => { cancelled = true; };
   }, [fetchNotifications]);
 

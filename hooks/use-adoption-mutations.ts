@@ -16,7 +16,6 @@ export function useAdoptionMutations() {
         .select()
         .single();
       if (error) {
-        // Unique constraint violation = already requested
         if (error.code === '23505') {
           throw new Error('ALREADY_REQUESTED');
         }

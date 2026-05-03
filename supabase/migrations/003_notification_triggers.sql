@@ -1,11 +1,3 @@
--- DogGO Phase C: Notification Triggers
--- Auto-insert notifications when key events happen
--- Run this in Supabase SQL Editor after 002_indexes_rpc_functions.sql
-
--- ============================================================
--- TRIGGER: Walk Requested → notify dog owner
--- ============================================================
-
 CREATE OR REPLACE FUNCTION public.notify_walk_requested()
 RETURNS trigger AS $$
 DECLARE
@@ -38,11 +30,6 @@ CREATE TRIGGER on_walk_requested
   FOR EACH ROW
   WHEN (NEW.status = 'requested')
   EXECUTE FUNCTION public.notify_walk_requested();
-
--- ============================================================
--- TRIGGER: Walk status changed → notify relevant party
--- ============================================================
-
 CREATE OR REPLACE FUNCTION public.notify_walk_status_change()
 RETURNS trigger AS $$
 DECLARE
@@ -53,7 +40,6 @@ DECLARE
   v_title VARCHAR;
   v_body VARCHAR;
 BEGIN
-  -- Only trigger on specific status transitions
   IF OLD.status = NEW.status THEN RETURN NEW; END IF;
 
   SELECT d.name, d.owner_id INTO v_dog_name, v_owner_id
@@ -89,11 +75,6 @@ CREATE TRIGGER on_walk_status_change
   AFTER UPDATE OF status ON public.walks
   FOR EACH ROW
   EXECUTE FUNCTION public.notify_walk_status_change();
-
--- ============================================================
--- TRIGGER: Adoption Requested → notify dog owner
--- ============================================================
-
 CREATE OR REPLACE FUNCTION public.notify_adoption_requested()
 RETURNS trigger AS $$
 DECLARE
@@ -125,10 +106,6 @@ CREATE TRIGGER on_adoption_requested
   AFTER INSERT ON public.adoption_requests
   FOR EACH ROW
   EXECUTE FUNCTION public.notify_adoption_requested();
-
--- ============================================================
--- TRIGGER: Adoption Approved → notify adopter
--- ============================================================
 
 CREATE OR REPLACE FUNCTION public.notify_adoption_approved()
 RETURNS trigger AS $$

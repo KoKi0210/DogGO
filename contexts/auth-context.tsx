@@ -55,7 +55,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         } catch {
           if (cancelled) return;
-          // Wait before retry (1s, 2s) to let Supabase cold-start
           if (i < retries - 1) {
             await new Promise((r) => setTimeout(r, (i + 1) * 1000));
           }
@@ -67,7 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!cancelled) setIsLoading(false);
     });
 
-    // Listen for future auth changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, newSession) => {
         setSession(newSession);

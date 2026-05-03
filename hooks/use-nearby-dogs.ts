@@ -66,7 +66,7 @@ export function useNearbyDogs(
     let cancelled = false;
 
     fetchDogs().then(() => {
-      if (cancelled) { /* unmounted */ }
+      if (cancelled) { }
     });
 
     return () => { cancelled = true; };

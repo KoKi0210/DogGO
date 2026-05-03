@@ -35,7 +35,6 @@ function LeaderboardEntryCardBase({ entry, isPodium }: LeaderboardEntryCardProps
   const medalText = useThemeColor({}, 'medalText');
   const textOnPrimary = useThemeColor({}, 'textOnPrimary');
 
-  // Medal gradient tokens
   const medalGold = useThemeColor({}, 'medalGold');
   const medalGoldEnd = useThemeColor({}, 'medalGoldEnd');
   const medalSilver = useThemeColor({}, 'medalSilver');
@@ -54,7 +53,6 @@ function LeaderboardEntryCardBase({ entry, isPodium }: LeaderboardEntryCardProps
 
   const gradientColors = gradientMap[entry.rank];
 
-  // Podium layout — vertical stacked card for top 3
   if (isPodium && isTopThree && gradientColors) {
     const avatarSize = entry.rank === 1 ? 56 : 44;
     const iconColor = MEDAL_ICON_COLORS[entry.rank];
@@ -101,7 +99,6 @@ function LeaderboardEntryCardBase({ entry, isPodium }: LeaderboardEntryCardProps
     );
   }
 
-  // Standard horizontal row layout for ranks 4+
   const iconColor = MEDAL_ICON_COLORS[entry.rank];
   const innerContent = (
     <View style={styles.inner}>
@@ -158,7 +155,6 @@ function LeaderboardEntryCardBase({ entry, isPodium }: LeaderboardEntryCardProps
 }
 
 const styles = StyleSheet.create({
-  // Podium vertical layout
   podiumCard: {
     borderRadius: 20,
     alignItems: 'center',
@@ -172,7 +168,6 @@ const styles = StyleSheet.create({
   },
   podiumName: { fontSize: 13, fontWeight: '700', textAlign: 'center' },
   podiumPoints: { fontSize: 18, fontWeight: '900' },
-  // Standard horizontal row
   inner: {
     flexDirection: 'row',
     alignItems: 'center',

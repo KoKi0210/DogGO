@@ -67,10 +67,8 @@ export function useWalkTracking() {
       startedAt,
     });
 
-    // Update duration every second
     timerRef.current = setInterval(updateDuration, 1000);
 
-    // Watch position frequently for smoother live stats updates.
     watchRef.current = await Location.watchPositionAsync(
       {
         accuracy: Location.Accuracy.BestForNavigation,
@@ -126,7 +124,6 @@ export function useWalkTracking() {
     };
   }, [state.startedAt]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (watchRef.current) watchRef.current.remove();

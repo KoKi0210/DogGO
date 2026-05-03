@@ -1,10 +1,3 @@
--- DogGO Phase A: Indexes, RPC Functions, and Schema Updates
--- Run this in Supabase SQL Editor after 001_initial_schema.sql
-
--- ============================================================
--- INDEXES on FK columns
--- ============================================================
-
 CREATE INDEX IF NOT EXISTS idx_dogs_owner_id ON public.dogs(owner_id);
 CREATE INDEX IF NOT EXISTS idx_walks_walker_id ON public.walks(walker_id);
 CREATE INDEX IF NOT EXISTS idx_walks_dog_id ON public.walks(dog_id);
@@ -15,24 +8,10 @@ CREATE INDEX IF NOT EXISTS idx_reviews_walker_id ON public.reviews(walker_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_walk_id ON public.reviews(walk_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_read ON public.notifications(user_id, read);
-
--- ============================================================
--- SCHEMA UPDATES
--- ============================================================
-
--- Push token for notifications
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS push_token VARCHAR;
-
--- Prevent duplicate adoption requests (one active request per adopter per dog)
 CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_active_adoption
   ON public.adoption_requests(dog_id, adopter_id)
   WHERE status != 'rejected';
-
--- ============================================================
--- RPC: increment_points
--- Atomically add points to a user's profile.
--- ============================================================
-
 CREATE OR REPLACE FUNCTION public.increment_points(
   user_id UUID,
   points_to_add INT
@@ -44,13 +23,6 @@ BEGIN
   WHERE id = user_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- ============================================================
--- RPC: get_leaderboard
--- Returns top walkers by points earned within a given period.
--- period: 'daily', 'weekly', 'monthly', 'all_time'
--- ============================================================
-
 CREATE OR REPLACE FUNCTION public.get_leaderboard(
   period TEXT DEFAULT 'all_time',
   max_results INT DEFAULT 50
@@ -66,11 +38,11 @@ DECLARE
   start_date TIMESTAMPTZ;
 BEGIN
   IF period = 'daily' THEN
-    start_date := date_trunc('day', now());
+    start_date := now() - INTERVAL '1 day';
   ELSIF period = 'weekly' THEN
-    start_date := date_trunc('week', now());
+    start_date := now() - INTERVAL '7 days';
   ELSIF period = 'monthly' THEN
-    start_date := date_trunc('month', now());
+    start_date := now() - INTERVAL '30 days';
   ELSE
     start_date := '1970-01-01'::TIMESTAMPTZ;
   END IF;
@@ -92,13 +64,6 @@ BEGIN
   LIMIT max_results;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- ============================================================
--- RPC: approve_adoption
--- Atomically: approve request, transfer ownership, reject others,
--- award bonus points. Uses SECURITY DEFINER to bypass RLS on dogs.
--- ============================================================
-
 CREATE OR REPLACE FUNCTION public.approve_adoption(
   request_id UUID
 )
@@ -109,7 +74,6 @@ DECLARE
   v_owner_id UUID;
   v_adoption_bonus INT := 500;
 BEGIN
-  -- Get request details
   SELECT ar.dog_id, ar.adopter_id
   INTO v_dog_id, v_adopter_id
   FROM public.adoption_requests ar
@@ -118,8 +82,6 @@ BEGIN
   IF v_dog_id IS NULL THEN
     RAISE EXCEPTION 'Adoption request not found or not pending';
   END IF;
-
-  -- Verify caller is the dog owner
   SELECT d.owner_id INTO v_owner_id
   FROM public.dogs d
   WHERE d.id = v_dog_id;
@@ -127,23 +89,15 @@ BEGIN
   IF v_owner_id != auth.uid() THEN
     RAISE EXCEPTION 'Only the dog owner can approve adoption requests';
   END IF;
-
-  -- 1. Approve this request
   UPDATE public.adoption_requests
   SET status = 'approved', updated_at = now()
   WHERE id = request_id;
-
-  -- 2. Transfer dog ownership and mark as adopted
   UPDATE public.dogs
   SET owner_id = v_adopter_id, status = 'adopted'
   WHERE id = v_dog_id;
-
-  -- 3. Reject all other pending requests for this dog
   UPDATE public.adoption_requests
   SET status = 'rejected', updated_at = now()
   WHERE dog_id = v_dog_id AND id != request_id AND status = 'pending';
-
-  -- 4. Award adoption bonus points to adopter (if not already awarded)
   UPDATE public.adoption_requests
   SET points_awarded = true
   WHERE id = request_id AND points_awarded = false;
@@ -155,12 +109,6 @@ BEGIN
   END IF;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- ============================================================
--- RPC: update_streak
--- Updates the user's streak count based on last_streak_date.
--- ============================================================
-
 CREATE OR REPLACE FUNCTION public.update_streak(
   user_id UUID
 )
@@ -178,16 +126,13 @@ BEGIN
   WHERE p.id = user_id;
 
   IF v_last_date = v_today THEN
-    -- Already walked today
     RETURN QUERY SELECT v_streak, 0;
     RETURN;
   END IF;
 
   IF v_last_date = v_today - 1 THEN
-    -- Consecutive day
     v_streak := v_streak + 1;
   ELSE
-    -- Streak broken or first walk
     v_streak := 1;
   END IF;
 

@@ -7,9 +7,6 @@ export interface LocationCoords {
 
 const EARTH_RADIUS_KM = 6371;
 
-/**
- * Request location permissions and get current location.
- */
 export async function getCurrentLocation(): Promise<LocationCoords | null> {
   try {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -32,10 +29,6 @@ export async function getCurrentLocation(): Promise<LocationCoords | null> {
   }
 }
 
-/**
- * Calculate distance between two coordinates using Haversine formula.
- * Returns distance in kilometers.
- */
 export function calculateDistance(
   lat1: number,
   lon1: number,
@@ -61,9 +54,6 @@ function toRad(degrees: number): number {
   return (degrees * Math.PI) / 180;
 }
 
-/**
- * Format distance for display.
- */
 export function formatDistance(km: number): string {
   if (km < 1) {
     return `${Math.round(km * 1000)}m`;
@@ -71,9 +61,6 @@ export function formatDistance(km: number): string {
   return `${km.toFixed(1)}km`;
 }
 
-/**
- * Format duration in minutes for display.
- */
 export function formatDuration(minutes: number): string {
   if (minutes < 60) {
     return `${Math.round(minutes)} min`;

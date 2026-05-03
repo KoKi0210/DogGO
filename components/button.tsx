@@ -64,7 +64,7 @@ export function Button({
           ? [error, '#FF6B6B']
           : ['transparent', 'transparent'];
 
-  const shadow = Shadows.claySm[0]; // outermost layer for button
+  const shadow = Shadows.claySm[0];
 
   return (
     <Animated.View

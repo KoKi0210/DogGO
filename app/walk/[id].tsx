@@ -213,7 +213,6 @@ export default function WalkDetailScreen() {
   const dog = walk.dog;
   const title = dog ? t('walks.walkWith', { dogName: dog.name }) : t('walks.activeWalk');
 
-  // Active walk — show tracking UI
   if (walk.status === 'active' || tracking.isTracking) {
     return (
       <>
@@ -256,7 +255,6 @@ export default function WalkDetailScreen() {
     return <Loading fullScreen />;
   }
 
-  // Requested / Approved / Cancelled states
   return (
     <>
       <Stack.Screen options={{ title }} />
@@ -293,7 +291,6 @@ export default function WalkDetailScreen() {
             </Card>
           )}
 
-          {/* Status-specific content */}
           {walk.status === 'requested' && isWalker && (
             <Card style={styles.statusCard}>
               <Text style={[styles.statusText, { color: textSecondary }]}>
